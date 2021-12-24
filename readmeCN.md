@@ -90,11 +90,6 @@ https://mp.weixin.qq.com/s/1Cvi5kkqfF9y1rBi97qLwg
 </br>
 </br>
 
-**项目负责人**-李宁
-
-<img src="http://ttc-tal.oss-cn-beijing.aliyuncs.com/1606904630/image.png" width="100" height="100" align="middle" />
-</br>
-</br>
 
 **项目成员**-刘劲松 胡耀国 邓坤楠 纪莹
 
