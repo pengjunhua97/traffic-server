@@ -117,11 +117,6 @@ public class EsUtils {
      */
     public static String replacePathParam(String url) {
         String uri = truncateUrl(url);
-        String regex = "/(([0-9]|-|_|,)+|([0-9a-zA-Z]){32})(/|$)";
-        Pattern pattern = Pattern.compile(regex);
-        while (pattern.matcher(uri).find()) {
-            uri = uri.replaceAll(regex, "/\\{pp\\}/");
-        }
         String parsedUri = uri.replaceAll("/$", "");
         if (parsedUri.isEmpty()) {
             parsedUri = "/";

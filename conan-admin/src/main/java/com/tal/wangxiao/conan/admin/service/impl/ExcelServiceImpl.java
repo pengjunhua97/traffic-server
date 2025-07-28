@@ -76,21 +76,21 @@ public class ExcelServiceImpl implements ExcelService {
                 }
             }
             String recordableCount = data.getRecordableCount().trim();
-            String department = data.getDepartment().trim();
-            Integer departmentId = null;
+//            String department = data.getDepartment().trim();
+            Integer departmentId = 100;
             Integer productLineId = null;
             //部门新增
-            Optional<Department> departmentOptional = departmentRepository.findByDeptName(department);
-            if (!departmentOptional.isPresent()) {
-                //部门属于最外层
-                Optional<Department> departmentOptional1 = departmentRepository.findFirstByParentId(0);
-                if (!departmentOptional1.isPresent()) {
-                    return new Result<>(ResponseCode.EXCEL_PARSE_FAIL, "找不到部门，解析失败");
-                }
-                departmentId = departmentOptional1.get().getId();
-            } else {
-                departmentId = departmentOptional.get().getId();
-            }
+//            Optional<Department> departmentOptional = departmentRepository.findByDeptName(department);
+//            if (!departmentOptional.isPresent()) {
+//                //部门属于最外层
+//                Optional<Department> departmentOptional1 = departmentRepository.findFirstByParentId(0);
+//                if (!departmentOptional1.isPresent()) {
+//                    return new Result<>(ResponseCode.EXCEL_PARSE_FAIL, "找不到部门，解析失败");
+//                }
+//                departmentId = departmentOptional1.get().getId();
+//            } else {
+//                departmentId = departmentOptional.get().getId();
+//            }
             //域名新增
             Optional<Domain> domainOptional = domainRepository.findByName(domainName);
             Integer domainId = null;

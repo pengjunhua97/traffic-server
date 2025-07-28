@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form">
-      <h3 class="title">柯南流量回放平台</h3>
+      <h3 class="title">流量回放平台</h3>
       <el-form-item prop="username">
         <el-input v-model="loginForm.username" type="text" auto-complete="off" placeholder="账号">
           <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" />
@@ -36,7 +36,7 @@
         <el-checkbox v-model="loginForm.rememberMe" style="margin:0px 0px 25px 0px;">记住密码</el-checkbox>
         <span class="boxRight">立即注册</span>
       </div>
-      
+
       <el-form-item style="width:100%;">
         <el-button
           :loading="loading"
@@ -52,7 +52,7 @@
     </el-form>
     <!--  底部  -->
     <div class="el-login-footer">
-      <span>Copyright © 2020 conan All Rights Reserved.</span>
+      <span>Copyright © 2024 All Rights Reserved.</span>
     </div>
   </div>
 </template>
@@ -70,7 +70,7 @@ export default {
       cookiePassword: "",
       loginForm: {
         username: "admin",
-        password: "admin123",
+        password: "",
         rememberMe: true,
         code: "",
         uuid: ""

@@ -1,6 +1,7 @@
 package com.tal.wangxiao.conan.common.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -38,6 +39,7 @@ public class DiffApiLogInfo {
      * compareData
      */
     @ApiModelProperty("requestBody")
+    @JsonIgnore
     private String requestBody;
 
     /**
@@ -45,6 +47,12 @@ public class DiffApiLogInfo {
      */
     @ApiModelProperty("requestId")
     private String requestId;
+
+    @ApiModelProperty("oldBody")
+    private String oldBody;
+
+    @ApiModelProperty("newBody")
+    private String newBody;
 
 
 

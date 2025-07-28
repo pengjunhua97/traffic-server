@@ -46,6 +46,9 @@
           </el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="接口名" prop="name">
+        <el-input v-model="queryParams.name" placeholder="请输入接口名"/>
+      </el-form-item>
       <el-form-item label="上线状态" prop="isOnline">
         <el-select
           v-model="queryParams.isOnline"
@@ -123,22 +126,31 @@
           type="warning"
           icon="el-icon-plus"
           size="mini"
-          @click="upload.open2 = true"
-          v-hasPermi="['admin:api:export']"
-          >excel批量导入</el-button
-        >
-      
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          icon="el-icon-plus"
-          size="mini"
-          @click="moreExcel"
-          v-hasPermi="['admin:api:export']"
-          >快速获取网关接口Excel(导出网关域名接口Excel)</el-button
+          @click="moreAdd"
+        >批量新增</el-button
         >
       </el-col>
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="warning"-->
+<!--          icon="el-icon-plus"-->
+<!--          size="mini"-->
+<!--          @click="upload.open2 = true"-->
+<!--          v-hasPermi="['admin:api:export']"-->
+<!--          >excel批量导入</el-button-->
+<!--        >-->
+<!--      -->
+<!--      </el-col>-->
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="warning"-->
+<!--          icon="el-icon-plus"-->
+<!--          size="mini"-->
+<!--          @click="moreExcel"-->
+<!--          v-hasPermi="['admin:api:export']"-->
+<!--          >快速获取网关接口Excel(导出网关域名接口Excel)</el-button-->
+<!--        >-->
+<!--      </el-col>-->
       <right-toolbar
         @queryTable="getList"
       ></right-toolbar>
@@ -151,6 +163,12 @@
       :data="apiList"
     >
       <el-table-column label="#" type="index" align="center"></el-table-column>
+      <el-table-column
+        label="接口ID"
+        align="center"
+        prop="apiId"
+      >
+      </el-table-column>
       <el-table-column label="接口名" align="center" prop="name">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
@@ -381,12 +399,77 @@
         <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
       </el-upload>
     </el-dialog>
+
+    <!-- 获取Es接口过滤，并批量添加接口 -->
+    <el-dialog
+      title="批量获取Es接口"
+      :visible.sync="openMore"
+      width="30%"
+      append-to-body
+    >
+      <el-form ref="moreForm" :model="moreForm" :rules="rules" label-width="108px">
+        <el-form-item label="域名" prop="domain">
+          <el-select
+            v-model="moreForm.domain"
+            filterable
+            placeholder="请输入域名名称"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="item in domainOptions"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="请求接口名称">
+          <el-input placeholder="请输入接口名称" v-model="moreForm.request" style="width: 100%"></el-input>
+        </el-form-item>
+        <el-form-item label="http方法" prop="method">
+          <el-select
+            v-model="moreForm.method"
+            clearable
+            placeholder="http方法"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="(item, index) in methodOptions"
+              :key="index"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <!--时间范围查询-->
+        <el-form-item label="时间范围">
+          <el-date-picker
+            v-model="dateRange"
+            type="datetimerange"
+            range-separator="至"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            format="yyyy-MM-dd HH:mm:ss"
+            @change="handleDateChange"
+            style="width: 100%"
+          ></el-date-picker>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitMoreAddForm">确 定</el-button>
+        <el-button @click="cancelMoreAdd">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import {
-  excelExportList,
+  excelDownloadByDomain,
+  excelExportList, moreAddForm,
 } from "@/api/admin/interface/excel";
 import {
   listApi,
@@ -421,6 +504,7 @@ export default {
         // 上传的地址
         url: process.env.VUE_APP_BASE_API + "/api/1.0/excel"
       },
+      dateRange: [], // 用于绑定时间范围选择器
       fileList:[],
       // 遮罩层
       loading: false,
@@ -436,6 +520,8 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      // 显示批量新增弹出层
+      openMore: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -452,6 +538,8 @@ export default {
       total: 0,
       // 表单参数
       form: {},
+      // 批量新增表单参数
+      moreForm: {},
       isReadOptions: [],
       isOnlineOptions: [],
       methodOptions: [],
@@ -466,13 +554,13 @@ export default {
           { required: true, message: "所属域名id不能为空", trigger: "blur" }
         ],
         name: [{ required: true, message: "接口名不能为空", trigger: "blur" }],
-        method: [
-          {
-            required: true,
-            message: `http方法不能为空`,
-            trigger: "blur"
-          }
-        ],
+        // method: [
+        //   {
+        //     required: true,
+        //     message: `http方法不能为空`,
+        //     trigger: "blur"
+        //   }
+        // ],
         isOnline: [
           {
             required: true,
@@ -529,6 +617,71 @@ export default {
         name:'exportExcel',
         query:{name:'exportExcel'}
       })
+    },
+    // 批量新增
+    moreAdd() {
+      this.reset();
+      this.openMore = true;
+      this.getDomainList();
+    },
+    // 表单重置
+    resetMoreAdd() {
+      this.moreform = {
+        id: null,
+        ruleJson: null,
+        deptId: null
+      };
+      this.resetForm("moreForm");
+    },
+    // 取消按钮
+    cancelMoreAdd() {
+      this.openMore = false;
+      this.resetMoreAdd();
+    },
+    /** 提交按钮 */
+    submitMoreAddForm() {
+      this.$refs["moreForm"].validate(valid => {
+        if (valid) {
+          moreAddForm(this.moreForm).then(data => {
+            this.openMore = false;
+            this.dateRange = []; // 清空时间范围
+            if (data.code == 200) {
+              //   新增成功的话，就弹出提示
+              this.$confirm(
+                "批量新增接口成功！",
+                "提示",
+                {
+                  confirmButtonText: "确定",
+                  cancelButtonText: "取消",
+                  type: "success"
+                }
+              ).then(
+                () => {
+                  this.openMore = false;
+                  this.getList();
+                },
+                () => {
+                  this.openMore = false;
+                  this.getList();
+                }
+              );
+            } else {
+              this.$message.error("抱歉，操作失败，请重试！");
+            }
+          }).catch(err => {
+              this.openMore = false;
+            });
+        }
+      });
+    },
+    handleDateChange(value) {
+      if (value && value.length === 2) {
+        this.moreForm.startTime = value[0];
+        this.moreForm.endTime = value[1];
+      } else {
+        this.moreForm.startTime = '';
+        this.moreForm.endTime = '';
+      }
     },
     /** 查询部门下拉树结构 */
     getTreeselect() {

@@ -132,4 +132,6 @@ public interface TaskApiRelationMapper {
      */
     public int deleteTaskApiRelationByIds(Integer[] ids);
 
+    List<TaskApiRelationView> selectTaskApiRelationViewListByApiIds(String apiIds);
+
 }

@@ -2000,14 +2000,14 @@ CREATE TABLE `sys_user` (
 -- ----------------------------
 BEGIN;
 INSERT INTO `sys_user` VALUES (0, 100, 'schedule', '定时任务执行人', '00', '', '', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '', NULL, '', NULL, '', NULL, '定时任务执行人');
-INSERT INTO `sys_user` VALUES (1, 100, 'admin', '柯南', '00', 'conan@163.com', '15888888889', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2020-12-08 10:25:23', 'admin', '2020-12-08 10:25:23', '', '2021-02-26 17:40:35', '管理员');
-INSERT INTO `sys_user` VALUES (2, 105, 'ry', '柯南1', '00', 'Conan@qq.com', '15666666666', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '2', '127.0.0.1', '2020-12-08 10:25:23', 'admin', '2020-12-08 10:25:23', 'admin', '2021-02-05 17:34:28', '测试员');
+INSERT INTO `sys_user` VALUES (1, 100, 'admin', '北', '00', 'conan@163.com', '15888888889', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2020-12-08 10:25:23', 'admin', '2020-12-08 10:25:23', '', '2021-02-26 17:40:35', '管理员');
+INSERT INTO `sys_user` VALUES (2, 105, 'ry', '北1', '00', 'Conan@qq.com', '15666666666', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '2', '127.0.0.1', '2020-12-08 10:25:23', 'admin', '2020-12-08 10:25:23', 'admin', '2021-02-05 17:34:28', '测试员');
 INSERT INTO `sys_user` VALUES (100, 101, 'test', 'test', '00', '804612791@qq.com', '13347114727', '0', '', '$2a$10$gybIzbDitC36qCCg5TVK/.MeZZXGsRyDey6oOhQkj8j6BPcUxPopW', '0', '0', '', NULL, 'admin', '2020-12-08 11:04:15', 'admin', '2020-12-11 18:11:33', NULL);
 INSERT INTO `sys_user` VALUES (101, 103, 'test2', 'test2', '00', '80461279@qq.com', '18785196571', '0', '', '$2a$10$8aH.vew11nXa/5Q5ftWpJO24GQdKa3CEnb2VSaqkbbf4EZ5Rmo9Tq', '0', '0', '', NULL, 'admin', '2020-12-23 18:10:28', '', NULL, NULL);
-INSERT INTO `sys_user` VALUES (102, 103, 'liujs', '刘劲松', '00', 'liujs@22.com', '13347118909', '0', '', '$2a$10$9tnrJFkKoExzq4fYEC/Sm.9pJqwPtW9OS9BPkIGLv6G7eeLKWJL22', '0', '0', '', NULL, 'admin', '2021-01-05 17:49:03', '', NULL, NULL);
-INSERT INTO `sys_user` VALUES (103, 103, 'jiy', '纪莹', '00', 'jiy@qq.com', '13390890711', '1', '', '$2a$10$/1XNwPDVuvwOO7lp6j5Xa.TlzvokDsvJQbnEU210Ez6Os20Gz8bP.', '0', '0', '', NULL, 'admin', '2021-01-05 17:50:33', 'admin', '2021-03-17 15:04:46', NULL);
-INSERT INTO `sys_user` VALUES (104, 103, 'huyaoguo', 'huyg', '00', 'huyg@qq.com', '13347116890', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '', NULL, 'admin', '2021-01-05 17:51:23', 'admin', '2021-01-22 11:23:48', NULL);
-INSERT INTO `sys_user` VALUES (105, 103, 'dengkn', '邓坤楠', '00', 'dengkn@qq.com', '13347114867', '0', '', '$2a$10$F/0z6UAm8aU2j0E9kQUyDOMc.ZpEj2d4XV8tcdFH3b2KCjZtW82xu', '0', '0', '', NULL, 'admin', '2021-01-06 11:44:25', '', NULL, NULL);
+INSERT INTO `sys_user` VALUES (102, 103, 'liujs', '刘', '00', 'liujs@22.com', '13347118909', '0', '', '$2a$10$9tnrJFkKoExzq4fYEC/Sm.9pJqwPtW9OS9BPkIGLv6G7eeLKWJL22', '0', '0', '', NULL, 'admin', '2021-01-05 17:49:03', '', NULL, NULL);
+INSERT INTO `sys_user` VALUES (103, 103, 'jiy', '纪', '00', 'jiy@qq.com', '13390890711', '1', '', '$2a$10$/1XNwPDVuvwOO7lp6j5Xa.TlzvokDsvJQbnEU210Ez6Os20Gz8bP.', '0', '0', '', NULL, 'admin', '2021-01-05 17:50:33', 'admin', '2021-03-17 15:04:46', NULL);
+INSERT INTO `sys_user` VALUES (104, 103, 'huyaoguo', 'hu', '00', 'huyg@qq.com', '13347116890', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '', NULL, 'admin', '2021-01-05 17:51:23', 'admin', '2021-01-22 11:23:48', NULL);
+INSERT INTO `sys_user` VALUES (105, 103, 'dengkn', '邓', '00', 'dengkn@qq.com', '13347114867', '0', '', '$2a$10$F/0z6UAm8aU2j0E9kQUyDOMc.ZpEj2d4XV8tcdFH3b2KCjZtW82xu', '0', '0', '', NULL, 'admin', '2021-01-06 11:44:25', '', NULL, NULL);
 COMMIT;
 
 -- ----------------------------
@@ -2080,7 +2080,7 @@ CREATE TABLE `sys_version` (
 -- Records of sys_version
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_version` VALUES (1, '1.0.0', 2213, '1.0.0版本问世了', '柯南流量回放平台', 0, '2021-01-14 19:55:40', '2021-01-14 19:55:42', 0);
+INSERT INTO `sys_version` VALUES (1, '1.0.0', 2213, '1.0.0版本问世了', '流量回放平台', 0, '2021-01-14 19:55:40', '2021-01-14 19:55:42', 0);
 COMMIT;
 
 -- ----------------------------

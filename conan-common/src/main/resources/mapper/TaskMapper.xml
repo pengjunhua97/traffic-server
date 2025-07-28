@@ -27,7 +27,7 @@
         select t.*, d.dept_name as dept_name, u.user_name as create_by_name from bss_task t
         LEFT  JOIN sys_dept d on t.sys_dept_id = d.dept_id
         LEFT  JOIN sys_user u on t.create_by = u.user_id
-        where 1=1
+        where 1=1 and t.is_delete = 0
         <if test="type != null "> and t.type = #{type}</if>
         <if test="name != null  and name != ''"> and t.name like concat('%', #{name}, '%')</if>
         <if test="status != null "> and t.status = #{status}</if>
@@ -39,6 +39,7 @@
         <if test="isDemo != null "> and t.is_demo = #{isDemo}</if>
         <if test="isForceLock != null "> and t.is_force_lock = #{isForceLock}</if>
         ${params.dataScope}
+        order by t.task_id desc
     </select>
 
     <select id="selectTaskById" parameterType="Integer" resultMap="TaskResult">
@@ -94,15 +95,15 @@
         where task_id = #{taskId}
     </update>
 
-    <delete id="deleteTaskById" parameterType="Integer">
-        delete from bss_task where id = #{id}
-    </delete>
+    <update id="deleteTaskById" parameterType="Integer">
+        update bss_task set is_delete = 1 where id = #{id}
+    </update>
 
-    <delete id="deleteTaskByIds" parameterType="String">
-        delete from bss_task where task_id in
+    <update id="deleteTaskByIds" parameterType="String">
+        update bss_task set is_delete = 1 where task_id in
         <foreach item="taskId" collection="array" open="(" separator="," close=")">
             #{taskId}
         </foreach>
-    </delete>
+    </update>
 
 </mapper>

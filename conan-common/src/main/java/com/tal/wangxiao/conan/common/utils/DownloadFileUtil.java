@@ -1,13 +1,17 @@
 package com.tal.wangxiao.conan.common.utils;
 
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
 import com.tal.wangxiao.conan.common.api.ResponseCode;
 import com.tal.wangxiao.conan.common.model.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
+import java.util.List;
 
 /**
  * @author: dengkunnan
@@ -52,9 +56,27 @@ public class DownloadFileUtil {
         } catch (Exception e) {
             log.error(">> 文件下载失败，errMsg:{}", e.getMessage());
             e.printStackTrace();
-            throw new Exception("文件下载失败，errMsg:"+e.getMessage());
+        } finally {
+            try {
+                if (bis != null) bis.close();
+                if (is != null) is.close();
+                if (outputStream != null) outputStream.close();
+            } catch (IOException e) {
+                log.error(">> 流关闭失败，errMsg:{}", e.getMessage());
+            }
         }
         log.info(">> 文件下载成功！fileName:{}", fileName);
+    }
+
+    private static boolean isMergedRegionExists(ExcelWriter writer, int firstRow, int lastRow, int firstCol, int lastCol) {
+        CellRangeAddress newRegion = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
+        for (int i = 0; i < writer.getSheet().getNumMergedRegions(); i++) {
+            CellRangeAddress existingRegion = writer.getSheet().getMergedRegion(i);
+            if (existingRegion.equals(newRegion)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 

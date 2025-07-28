@@ -89,7 +89,16 @@
                     }
                   ]"
                   filter-placement="bottom-end"
-                ></el-table-column>
+                >
+                  <template slot-scope="scope">
+                    <el-button
+                      type="text"
+                      @click="handleApiClick(scope.row)"
+                    >
+                      {{ scope.row.api_name }}
+                    </el-button>
+                  </template>
+                </el-table-column>
                 <el-table-column
                   align="center"
                   label="方法"
@@ -131,6 +140,64 @@
           </el-tab-pane>
         </el-tabs>
       </div>
+      <!-- 添加弹窗 -->
+      <el-dialog
+        title="录制接口详情"
+        :visible.sync="dialogVisible"
+        width="70%"
+        :style="{ height: '70vh' }"
+      >
+        <el-table :data="detailData">
+          <el-table-column
+            prop="body"
+            label="请求Body"
+          ></el-table-column>
+          <el-table-column
+            prop="header"
+            label="请求Header"
+          ></el-table-column>
+          <el-table-column
+            label="操作"
+            width="100"
+          >
+            <template slot-scope="scope">
+              <el-button
+                type="text"
+                size="small"
+                @click="handleEdit(scope.row)"
+              >修改</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-dialog>
+
+      <!-- 添加修改弹窗 -->
+      <el-dialog
+        title="修改数据"
+        :visible.sync="editDialogVisible"
+        width="50%"
+      >
+        <el-tabs type="border-card">
+          <el-tab-pane label="请求Body">
+            <pre
+              class="json-view"
+              contenteditable="true"
+              @blur="handleBodyBlur"
+              v-html="highlightJson(formatJson(editForm.body))"></pre>
+          </el-tab-pane>
+          <el-tab-pane label="请求Header">
+            <pre
+              class="json-view"
+              contenteditable="true"
+              @blur="handleHeaderBlur"
+              v-html="highlightJson(formatJson(editForm.header))"></pre>
+          </el-tab-pane>
+        </el-tabs>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="editDialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="handleSave">保存</el-button>
+        </div>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -140,7 +207,7 @@ import createBar from "@/utils/echarts/bar";
 import {
   getLogByRecord,
   getProgressByRecord,
-  getDetailByRecord
+  getDetailByRecord, getRecordResult, saveRecordResult
 } from "@/api/execution/printRecordLog";
 import CommonCard from "./commonCard";
 
@@ -150,6 +217,7 @@ export default {
   data() {
     return {
       id: "",
+      recordId: "",
       type: "",
       percentage: 0, //进度条数据
       resultInfo: "", //日志标题
@@ -165,7 +233,17 @@ export default {
       activeName: "first",
       queryParams: {
         task_execution_id: null
-      }
+      },
+      dialogVisible: false,
+      detailData: [], // 弹窗表格数据
+      currentApi: '', // 当前点击的接口
+      editDialogVisible: false,
+      editForm: {
+        body: '',
+        header: '',
+        id: 0
+      },
+      currentRow: null
     };
   },
   created() {
@@ -204,7 +282,7 @@ export default {
               clearInterval(this.intervalId);
               this.getRecordDetail();
               return;
-            } 
+            }
           } else {
             clearInterval(this.intervalId);
           }
@@ -243,6 +321,7 @@ export default {
           if (res.code !== 200) return;
           let list = res.data.record_detail_list;
           this.recordDetail = res.data.record_detail_list;
+          this.recordId = res.data.record_id;
           this.initPie(list);
           this.initBar(list);
           this.Detailloading = false;
@@ -250,6 +329,88 @@ export default {
         .catch(err => {
           this.Detailloading = false;
         });
+    },
+    // 点击接口获取录制接口结果详情
+    handleApiClick(row) {
+      this.currentApi = row.api_name;
+      this.getDetailData(row.api_id,this.recordId); // 获取详细数据
+      this.dialogVisible = true;
+    },
+    getDetailData(api_id, record_id) {
+      // 这里根据currentApi获取详细数据
+      let params = {
+        apiId: api_id,
+        recordId: record_id
+      }
+      getRecordResult(params)
+        .then(res => {
+          if (res.code !== 200) return;
+          this.detailData = res.data;
+          console.log(this.detailData)
+        })
+        .catch(err => {
+          this.dialogVisible = false;
+        });
+    },
+    handleEdit(row) {
+      console.log("修改数据", row);
+      this.currentRow = row;
+      this.editForm.body = row.body;
+      this.editForm.header = row.header;
+      this.editForm.id = row.record_result_id;
+      this.editDialogVisible = true;
+    },
+    handleSave() {
+      saveRecordResult(this.editForm)
+       .then(res => {
+          if (res.code!== 200) return;
+          this.$message.success('修改成功');
+          this.editDialogVisible = false;
+        })
+       .catch(err => {
+          this.editDialogVisible = false;
+        });
+    },
+    // 新增格式化方法
+    formatJson(json) {
+      try {
+        // 如果是字符串，先解析为对象
+        if (typeof json === 'string') {
+          return JSON.parse(json);
+        }
+        return json;
+      } catch (e) {
+        console.error('JSON解析错误:', e);
+        return {};
+      }
+    },
+    highlightJson(json) {
+      if (typeof json !== 'string') {
+        json = JSON.stringify(json, null, 2);
+      }
+      json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+        function (match) {
+          let cls = 'number';
+          if (/^"/.test(match)) {
+            if (/:$/.test(match)) {
+              cls = 'key';
+            } else {
+              cls = 'string';
+            }
+          } else if (/true|false/.test(match)) {
+            cls = 'boolean';
+          } else if (/null/.test(match)) {
+            cls = 'null';
+          }
+          return '<span class="' + cls + '">' + match + '</span>';
+        });
+    },
+    handleBodyBlur(event) {
+      this.editForm.body = event.target.innerText;
+    },
+    handleHeaderBlur(event) {
+      this.editForm.header = event.target.innerText;
     },
     // 实际录制接口占比饼图
     initPie(list) {
@@ -367,4 +528,20 @@ export default {
 </script>
 <style lang="scss">
 @import "@/assets/styles/printLog.scss";
+
+.json-view {
+  background-color: #f5f5f5;
+  padding: 10px;
+  border-radius: 4px;
+  max-height: 400px;
+  overflow: auto;
+  white-space: pre;
+  word-wrap: break-word;
+}
+
+.json-view .key { color: #d63200; }
+.json-view .string { color: #0b7500; }
+.json-view .number { color: #1643ff; }
+.json-view .boolean { color: #1c00cf; }
+.json-view .null { color: #808080; }
 </style>

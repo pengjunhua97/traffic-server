@@ -22,9 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -71,6 +73,7 @@ public class TaskExecutionServiceImpl implements TaskExecutionService {
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Result<Object> initExcAndRecord(Integer taskId, Integer operateBy) throws Exception {
         Task task = new Task();
         if (!Objects.isNull(taskId)) {
@@ -120,7 +123,19 @@ public class TaskExecutionServiceImpl implements TaskExecutionService {
 
     @Override
     public List<TaskExecutionInfo> findTaskExecutionList(TaskExecutionInfo taskExecutionInfo) {
-        return taskExecutionMapper.selectTaskExecutionList(taskExecutionInfo);
+        List<TaskExecutionInfo> result = new ArrayList<>();
+        List<TaskExecutionInfo> taskExecutionInfos = taskExecutionMapper.selectTaskExecutionList(taskExecutionInfo);
+        // 判断该任务是否已删除，和任务状态是否已经执行过录制回放，如果执行过录制和回放，则不需要移除，如果已经删除了且未执行过录制和回放，则需要移除
+        for (TaskExecutionInfo taskExecution : taskExecutionInfos) {
+            if (taskExecution.getIsDelete() > 0) {
+                // 任务状态为待配置或可录制时，说明任务还未执行
+                if (taskExecution.getStatus() == 0 || taskExecution.getStatus() == 10) {
+                    continue;
+                }
+            }
+            result.add(taskExecution);
+        }
+        return result;
     }
 
 
@@ -130,7 +145,7 @@ public class TaskExecutionServiceImpl implements TaskExecutionService {
         Optional<List<TaskApiRelation>> taskApiRelationList = taskApiRelationRepository.findAllByTaskId(taskId);
         List<Integer> apiList = Lists.newArrayList();
         if(!taskApiRelationList.isPresent()) {
-            throw new Exception("该任务下面没有绑定接口，请绑定后宅执行录制");
+            throw new Exception("该任务下面没有绑定接口，请绑定后再执行录制");
         }
         for (TaskApiRelation taskApiRelation : taskApiRelationList.get()) {
             Integer apiId = taskApiRelation.getApiId();

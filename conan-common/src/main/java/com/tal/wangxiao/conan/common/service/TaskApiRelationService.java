@@ -97,4 +97,6 @@ public interface TaskApiRelationService
      * @return 结果
      */
     public int deleteTaskApiRelationById(Integer id);
+
+    List<TaskApiRelationView> selectTaskApiRelationViewListByApiIds(String apiIds);
 }

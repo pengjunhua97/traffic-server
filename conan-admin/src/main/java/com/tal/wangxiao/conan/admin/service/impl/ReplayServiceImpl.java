@@ -1,5 +1,9 @@
 package com.tal.wangxiao.conan.admin.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.tal.wangxiao.conan.admin.cache.AdminCache;
 import com.tal.wangxiao.conan.admin.service.ReplayService;
 import com.tal.wangxiao.conan.common.api.ResponseCode;
@@ -20,6 +24,8 @@ import com.tal.wangxiao.conan.sys.auth.core.domain.model.LoginUser;
 import com.tal.wangxiao.conan.sys.common.utils.ServletUtils;
 import com.tal.wangxiao.conan.sys.framework.web.service.TokenService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +33,8 @@ import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 流量回放服务实现类
@@ -84,6 +92,28 @@ public class ReplayServiceImpl implements ReplayService {
     public Result<Object> findReplaysByTaskExecutionId(Integer taskExecutionId) {
         List<Replay> replayList = replayRepository.findByTaskExecutionIdOrderByStartAtDesc(taskExecutionId);
         List<ReplayVO> replayVOList = ConvertUtil.convert2List(replayList, ReplayVO.class, new ReplayConverter());
+        boolean isBaseline = false;
+        if (!CollectionUtils.isEmpty(replayVOList)) {
+            for (ReplayVO replayVO : replayVOList) {
+                if (replayVO.getIsBaseline()) {
+                    isBaseline = true;
+                    break;
+                }
+            }
+            for (ReplayVO replayVO : replayVOList) {
+                if (isBaseline) {
+                    replayVO.setHasBaseLine(1);
+                }else {
+                    replayVO.setHasBaseLine(0);
+                }
+                Optional<Diff> diffOptional = diffRepository.findFirstByTaskExecutionIdAndReplayIdOrderByCreateTimeDesc(taskExecutionId, replayVO.getId());
+                if (diffOptional.isPresent()) {
+                    replayVO.setDiffed(1);
+                }else {
+                    replayVO.setDiffed(0);
+                }
+            }
+        }
         return new Result<>(ResponseCode.SUCCESS, replayVOList);
     }
 
@@ -140,6 +170,7 @@ public class ReplayServiceImpl implements ReplayService {
         replay.setReplayType(replayType);
         replay.setReplayEnv(replayEnv);
         replay.setIsBaseline(false);
+        replay.setSuccessRate((double) 0);
         Replay newReplay = replayRepository.save(replay);
         taskExecution.setUpdateAt(operateTime);
         taskExecution.setUpdateBy(loginUser.getUser().getUserId().intValue());
@@ -163,7 +194,7 @@ public class ReplayServiceImpl implements ReplayService {
         }
         //下发回放任务
         KafkaTaskData taskData = new KafkaTaskData();
-        String agentId = agentCommonService.getAgentId(AdminCache.getEnv());
+        String agentId = agentCommonService.getAgentId(replayEnv);//AdminCache.getEnv()); //zc
         taskData.setAgentId(agentId);
         taskData.setRecordId(recordOptional.get().getId());
         taskData.setReplayId(newReplay.getId());
@@ -171,12 +202,12 @@ public class ReplayServiceImpl implements ReplayService {
         log.info("下发回放任务，agentId = {}, task_execution_id = {}, record_id = {}, replay_id = {}", agentId, taskExecutionId, recordOptional.get().getId(), newReplay.getId());
         KafkaData<KafkaTaskData> kafkaData = new KafkaData<>();
         kafkaData.setType(KafkaType.REPLAY);
-        kafkaData.setRunEnv(AdminCache.getEnv());
+        kafkaData.setRunEnv(replayEnv);//AdminCache.getEnv());//zc
         kafkaData.setData(taskData);
         TaskMessage<KafkaTaskData> taskMessage = new TaskMessage<>();
         taskMessage.setTimestamp(System.currentTimeMillis());
         taskMessage.setData(kafkaData);
-        log.info("消息写入,执行环境为: " + AdminCache.getEnv());
+        log.info("消息写入,执行环境为: " + replayEnv);//AdminCache.getEnv());//zc
         kafkaMessageService.sendKafkaMessage(taskMessage, KafkaTopic.CONAN_TASK_DIST);
         return new Result<>(ResponseCode.SUCCESS, taskMessage);
     }
@@ -227,12 +258,65 @@ public class ReplayServiceImpl implements ReplayService {
             } catch (Exception e) {
                 return new Result<>(ResponseCode.INVALID_REDIS_KEY, requestId + "-" + recordId + "-" + replayId + "-" + apiId);
             }
-            oneApiDetailMap.put("response", response);
-            oneApiDetailMap.put("request_body", requestBody);
+            Map<String, String> splitStr = splitStr(requestBody);
+            System.out.println("转化前的json对象：" + response);
+            // 如果字符串可能被多次转义
+            JSONObject jsonObject = safeParse(response);
+            System.out.println("转化后的json对象：" + jsonObject);
+            oneApiDetailMap.put("response", jsonObject);
+            oneApiDetailMap.put("requestId", splitStr.get("requestId"));
+            oneApiDetailMap.put("request_body_record", splitStr.get("request_body_record"));
+            oneApiDetailMap.put("request_body", splitStr.get("request_body"));
             apiDetailList.add(oneApiDetailMap);
         }
         resultMap.put("replay_detail", apiDetailList);
         return new Result<>(ResponseCode.SUCCESS, resultMap);
+    }
+
+    public JSONObject safeParse(String jsonStr) {
+        try {
+            // 先尝试直接解析
+            return JSONObject.parseObject(jsonStr);
+        } catch (Exception e) {
+            try {
+                // 处理可能的多重转义情况
+                if (jsonStr.startsWith("\"") && jsonStr.endsWith("\"")) {
+                    String unescaped = jsonStr.substring(1, jsonStr.length()-1)
+                            .replace("\\\"", "\"");
+                    return JSONObject.parseObject(unescaped);
+                }
+                throw e;
+            } catch (Exception ex) {
+                throw new RuntimeException("JSON解析失败: " + ex.getMessage());
+            }
+        }
+    }
+
+    public Map<String,String> splitStr(String str) {
+        System.out.println("响应数据：" + str);
+        Map<String,String> map = new HashMap<>();
+        if (StringUtils.isNotBlank(str)) {
+            // 定义正则表达式
+            Pattern pattern = Pattern.compile("\"requestId=([^原]+)原body=(.*)新body=(.*)\"$");
+            Matcher matcher = pattern.matcher(str);
+
+            String requestId = null;
+            String oldBody = null;
+            String newBody = null;
+            if (matcher.find()) {
+                requestId = matcher.group(1);
+                oldBody = matcher.group(2).isEmpty() ? null : matcher.group(2);
+                newBody = matcher.group(3).isEmpty() ? null : matcher.group(3);
+
+                System.out.println("requestId: " + requestId);
+                System.out.println("原body: " + oldBody);
+                System.out.println("新body: " + newBody);
+            }
+            map.put("requestId",requestId);
+            map.put("request_body_record",oldBody);
+            map.put("request_body",newBody);
+        }
+        return map;
     }
 
     @Override

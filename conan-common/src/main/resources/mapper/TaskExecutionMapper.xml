@@ -14,6 +14,7 @@
         <result property="updateBy"    column="update_by"    />
         <result property="taskName"    column="task_name"    />
         <result property="deptName"    column="dept_name"    />
+        <result property="isDelete"    column="is_delete"    />
 
     </resultMap>
 
@@ -22,7 +23,7 @@
     </sql>
 
     <select id="selectTaskExecutionList" parameterType="TaskExecutionInfo" resultMap="TaskExecutionResult">
-        select task.name as task_name,dept.dept_name as dept_name, te.* from bss_task_execution te LEFT JOIN bss_task task ON te.task_id = task.task_id LEFT JOIN sys_dept dept ON dept.dept_id = task.sys_dept_id   where 1=1
+        select task.name as task_name,dept.dept_name as dept_name, te.*, task.is_delete from bss_task_execution te LEFT JOIN bss_task task ON te.task_id = task.task_id LEFT JOIN sys_dept dept ON dept.dept_id = task.sys_dept_id   where 1=1
         <if test="status != null "> and te.status = #{status}</if>
         <if test="deptId != null "> and task.sys_dept_id = #{deptId}</if>
         <if test="keyword != null and keyword != ''">and task.name like concat('%', #{keyword}, '%')</if>

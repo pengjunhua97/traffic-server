@@ -42,9 +42,8 @@
     </select>
 
     <select id="selectTaskApiRelationViewListByDomainId" parameterType="Integer" resultMap="TaskApiRelationViewResult">
-       SELECT re.task_api_relation_id, re.position , api.recordable_count as record_count, re.diff_type as diff_type, api.api_id as api_id,api.name as api_name,domain.name as domain_name, d.dept_name as dept_name, u.user_name as create_by_name from bss_api api
-        LEFT JOIN bss_task_api_relation re on  api.api_id = re.api_id
-        LEFT JOIN bss_domain  domain ON domain.id = api.domain_id
+       SELECT api.recordable_count as record_count, api.api_id as api_id,api.name as api_name,domain.name as domain_name, d.dept_name as dept_name, u.user_name as create_by_name from bss_api api
+       LEFT JOIN bss_domain  domain ON domain.id = api.domain_id
         LEFT  JOIN sys_dept d on api.sys_dept_id = d.dept_id
         LEFT  JOIN sys_user u on api.create_by = u.user_id
         where domain.id = #{domainId}
@@ -116,5 +115,19 @@
             #{taskApiRelationId}
         </foreach>
     </delete>
+
+    <select id="selectTaskApiRelationViewListByApiIds" resultMap="TaskApiRelationViewResult">
+        SELECT api.recordable_count as record_count,
+               api.api_id           as api_id,
+               api.name             as api_name,
+               domain.name          as domain_name,
+               d.dept_name          as dept_name,
+               u.user_name          as create_by_name
+        from bss_api api
+                 LEFT JOIN bss_domain  domain ON domain.id = api.domain_id
+            LEFT JOIN sys_dept d on api.sys_dept_id = d.dept_id
+            LEFT JOIN sys_user u on api.create_by = u.user_id
+        where api.api_id in (${apiIds})
+    </select>
 
 </mapper>

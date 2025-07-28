@@ -121,17 +121,9 @@
             </div>
             <div class="box-body">
               <p class="text-muted">
-                增加数据中心、开放中心模块，已和PTS压测平台打通提供线上真实压力模型与压测数据，实现全链路自动化压测，目前已在大班业务试运行
               </p>
               <p class="text-muted">
-                柯南流量回放平台是一个将线上环境真实流量复制并用于自动回归测试的平台，帮助大家提升测试质量，提高回归效率，并已经和发布系统联动来自动进行服务端的接口回归。如果有感兴趣的，可以联系质量研发部-刘劲松老师了解。
               </p>
-              <a
-                href="http://app.xesv5.com/ep-docs/CONAN/"
-                target="_blank"
-                class="btn btn-sm btn-outline rounded b-success"
-                >阅读更多
-              </a>
             </div>
           </el-col>
         </el-row>

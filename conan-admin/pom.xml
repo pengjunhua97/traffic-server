@@ -13,7 +13,7 @@
     <artifactId>conan-admin</artifactId>
 
     <name>conan-admin</name>
-    <description>柯南admin管理模块</description>
+    <description>admin管理模块</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -36,18 +36,18 @@
         </dependency>
 
         <!-- spring-boot-devtools -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <optional>true</optional> <!-- 表示依赖不会传递 -->
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-devtools</artifactId>-->
+<!--            <optional>true</optional> &lt;!&ndash; 表示依赖不会传递 &ndash;&gt;-->
+<!--        </dependency>-->
 
 
         <!-- 核心模块-->
-        <dependency>
-            <groupId>com.tal.wangxiao</groupId>
-            <artifactId>conan-sys-framework</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.tal.wangxiao</groupId>-->
+<!--            <artifactId>conan-sys-framework</artifactId>-->
+<!--        </dependency>-->
 
 
         <dependency>
@@ -58,6 +58,7 @@
         <dependency>
             <groupId>com.tal.wangxiao</groupId>
             <artifactId>conan-common</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
@@ -65,7 +66,7 @@
             <artifactId>conan-utils</artifactId>
         </dependency>
 
-        <!-- 柯南system-framwork模块 -->
+        <!-- system-framwork模块 -->
         <dependency>
             <groupId>com.tal.wangxiao</groupId>
             <artifactId>conan-sys-api</artifactId>
@@ -121,6 +122,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>1.5.3.RELEASE</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -132,7 +134,7 @@
             </plugin>
 
         </plugins>
-        <finalName>${project.artifactId}</finalName>
+        <finalName>uusense-admin</finalName>
     </build>
 
     <!-- 配置环境的profile -->

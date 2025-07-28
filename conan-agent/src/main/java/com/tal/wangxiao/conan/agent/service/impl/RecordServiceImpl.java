@@ -277,7 +277,7 @@ public class RecordServiceImpl implements RecordService {
         recordOptional.get().setEndTime(LocalDateTime.now());
         recordRepository.save(recordOptional.get());
         log.info("录制任务完成 任务ID={} 成功率={}", recordId, successRate);
-        redisTemplateTool.setLogByRecordId_END(recordId, "录制任务执行完成，录制完成率:" + successRate + "%");
+        //redisTemplateTool.setLogByRecordId_END(recordId, "录制任务执行完成，录制完成率:" + successRate + "%");
         taskStatusUtil.updateTaskStatus(recordOptional.get().getTaskExecutionId(), TaskStatus.RECORD_SUCCESS);
     }
 
@@ -304,12 +304,21 @@ public class RecordServiceImpl implements RecordService {
             log.info("域名" + requestQuery.getDomain() + "无es mapping信息配置");
             return null;
         }
-
+        log.info("=======================================================================================");
+        log.info("domainKeyword: " + domainKeyword);
+        log.info("getDomain: " + requestQuery.getDomain());
+        log.info("url: " + url);
+        log.info("getApi: " + requestQuery.getApi());
+        log.info("=======================================================================================");
         QueryBuilder shouldQuery = QueryBuilders.boolQuery()
                 .should(QueryBuilders.termQuery(domainKeyword + ".keyword", requestQuery.getDomain()));
+        QueryBuilder shouldQuery2 = QueryBuilders.boolQuery()
+                .should(QueryBuilders.termQuery( esConditionSetting.get().getMethod() + ".keyword", method));
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery()
-                .must(QueryBuilders.wildcardQuery(url + ".keyword", method + " " + requestQuery.getApi() + "*"))
-                .must(shouldQuery);
+                .must(QueryBuilders.wildcardQuery(url + ".keyword", "*" + requestQuery.getApi() + "*"))
+                .must(shouldQuery)
+                .must(shouldQuery2);
+        //method + " " +
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         log.info(queryBuilder.toString());
         sourceBuilder.query(queryBuilder);
@@ -317,7 +326,8 @@ public class RecordServiceImpl implements RecordService {
         sourceBuilder.size(500);
         Scroll scroll = new Scroll(TimeValue.timeValueMinutes(10L));
         SearchRequest searchRequest = new SearchRequest();
-        searchRequest.source(sourceBuilder).scroll(scroll).indices();
+        // TODO: 2021/1/8 从配置文件中获取索引
+        searchRequest.source(sourceBuilder).scroll(scroll).indices(esConditionSetting.get().getIndexName());
         //根据域名获取对应es配置信息
         RestHighLevelClient restHighLevelClient = getRestHighLevelClient(domainId);
         try {
@@ -326,8 +336,9 @@ public class RecordServiceImpl implements RecordService {
             redisTemplateTool.setLogByRecordId_WARN(recordId, "日志ES查询失败");
             log.error("日志查询失败" + e);
         }
+        //log.info(searchResponse.toString());
         String scrollId = searchResponse.getScrollId();
-        log.info("scroll_id=" + scrollId);
+        //log.info("scroll_id=" + scrollId);
         totalElements = searchResponse.getHits().totalHits;
         int total = (int) totalElements;
         log.info("查询到总流量" + totalElements + "条");
@@ -414,23 +425,43 @@ public class RecordServiceImpl implements RecordService {
         RecordResult recordResult = new RecordResult();
         Map esFlowMap = hit.getSourceAsMap();
         String apiKey = esConditionSetting.getApi();
+        log.info("========================================================");
+        log.info("apiKey:" + apiKey);
         //当URL中GET 请求参数是单独的字段存储的时候，采用接口key?参数key
         if (apiKey.contains("?")) {
             String[] urlPathKeys = apiKey.split("\\?");
             apiKey = urlPathKeys[0];
         }
         String domianKey = esConditionSetting.getDomain();
+        log.info("domianKey:" + domianKey);
         String methodKey = esConditionSetting.getMethod();
+        log.info("methodKey:" + methodKey);
         String requestBodyKey = esConditionSetting.getRequestBody();
         String headerKey = esConditionSetting.getHeader();
+        log.info("headerKey:" + headerKey);
         // 在获取不到key时避免抛出 NullPointerException 空指针异常
         String apiName = RegexUtils.getMsgByRegex(esFlowMap.get(apiKey) + "", esConditionSetting.getApiRegex());
+        log.info("apiName:" + apiName);
         String method = RegexUtils.getMsgByRegex(esFlowMap.get(methodKey) + "", esConditionSetting.getMethodRegex());
+        log.info("method:" + method);
+        // TODO 这里只根据apiName和method来查询apiId，可能会有问题（可能会存在多个无法跟目前api接口进行唯一对应），需要修改
+        // String timestamp =esFlowMap.get("@timestamp").toString();
+        // log.info("timestamp = " + timestamp);
+        // SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        // inputFormat.setTimeZone(TimeZone.getTimeZone("UTC")); // 设置时区为 UTC
+        // Date date = inputFormat.parse(timestamp);
+        // Api api = getApiInfo(recordId,method,apiName,date);
         Api api = getApiInfo(recordId,method,apiName);
+        //log.info("api:" + api.toString());
+        log.info("========================================================");
+
+
         if (api !=null) {
+            log.info("++++++++++");
             int apiId = api.getId();
             List<Api> apiList = apiRepository.findByNameAndMethod(apiName, HttpMethodConstants.valueOf(method).getValue());
             if (apiList.size() != 0) {
+                log.info("---------");
                 apiId = apiList.get(0).getId();
                 String body = RegexUtils.getMsgByRegex(esFlowMap.get(requestBodyKey) + "", esConditionSetting.getRequestBodyRegex());
                 String header = RegexUtils.getMsgByRegex(esFlowMap.get(headerKey) + "", esConditionSetting.getHeaderRegex());
@@ -445,7 +476,7 @@ public class RecordServiceImpl implements RecordService {
                 log.error("未查询到api数据 API={}", apiName);
             }
         }
-
+        log.info(">>>>>>>>>>>>>>>>>.");
     }
 
 

@@ -23,6 +23,8 @@ public class PageInfoResponse<T> {
     private  long page = 0;
     @ApiModelProperty("当前页长度")
     private  long size = 0;
+    @ApiModelProperty("每页大小")
+    private  long pageSize = 0;
     @ApiModelProperty("结果数据")
     private T data = null;
 
@@ -33,6 +35,7 @@ public class PageInfoResponse<T> {
         pageInfoHandlerUtils.setPages(pageInfo.getPages());
         pageInfoHandlerUtils.setPage(pageInfo.getPageNum());
         pageInfoHandlerUtils.setSize(pageInfo.getSize());
+        pageInfoHandlerUtils.setPageSize(pageInfo.getPageSize());
         pageInfoHandlerUtils.setData(pageInfo.getList());
         return pageInfoHandlerUtils;
     }

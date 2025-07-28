@@ -11,19 +11,20 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum TaskStatus {
-    RREDY("可执行", 0),
-    RECORD("录制中", 1),
-    RECORD_SUCCESS("录制成功", 2),
-    RECORD_FAIL("录制失败", 3),
-    REPLAY("回放中", 4),
-    REPLAY_SUCCESS("回放成功", 5),
-    REPLAY_FAIL("回放失败", 6),
-    DIFF("比对中", 7),
-    DIFF_SUCCESS("比对成功", 8),
-    DIFF_FAIL("比对失败", 9),
-    DOING("执行中", 10),
-    END("执行完成", 11),
-    WRONG("执行失败", 12);
+    CONFIG("待配置", 0),
+    RREDY("可录制", 10),
+    RECORD("录制中", 11),
+    RECORD_SUCCESS("录制成功", 12),
+    RECORD_FAIL("录制失败", 13),
+    REPLAY("回放中", 20),
+    REPLAY_SUCCESS("回放成功", 21),
+    REPLAY_FAIL("回放失败", 22),
+    DIFF("比对中", 30),
+    DIFF_SUCCESS("比对成功", 31),
+    DIFF_FAIL("比对失败", 32),
+    DOING("执行中", 100),
+    END("执行完成", 101),
+    WRONG("执行失败", 102);
 
     private String label;
     private Integer value;

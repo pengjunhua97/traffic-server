@@ -76,6 +76,17 @@ public class Task extends ConanBaseEntity {
     @ApiModelProperty(hidden = true, name = "添加用户名称")
     private String createByName;
 
+    @ApiModelProperty
+    private Integer isDelete;
+
+    public Integer getIsDelete() {
+        return isDelete;
+    }
+
+    public void setIsDelete(Integer isDelete) {
+        this.isDelete = isDelete;
+    }
+
 
     public void setDeptName(String deptName) {
         this.deptName = deptName;

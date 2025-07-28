@@ -13,7 +13,7 @@ export function excelDeleteFileByDomain (data) {
   return request({
     url: '/api/1.0/excel/deleteFileByDomain',
     method: 'get',
-    params:{domain:data} 
+    params:{domain:data}
   })
 }
 // 根据domainName下载文件(不删除生成到文件)
@@ -21,7 +21,7 @@ export function excelDownloadFileNoDeleteByDomain (data) {
   return request({
     url: '/api/1.0/excel/downloadFileNoDeleteByDomain',
     method: 'get',
-    params:{domain:data} 
+    params:{domain:data}
   })
 }
 
@@ -30,14 +30,23 @@ export function excelGetFileNameList (data) {
   return request({
     url: '/api/1.0/excel/getFileNameList',
     method: 'get',
-    params:data 
+    params:data
   })
 }
 //  通过域名下载流量
 export function excelDownloadByDomain (data) {
   return request({
-    url: '/api/1.0/admin/record/downloadByDomain',
+    url: '/api/1.0/admin/record/downloadByEsQuery',
     method: 'get',
-    params:data 
+    params:data
+  })
+}
+
+//  批量新增接口
+export function moreAddForm (data) {
+  return request({
+    url: '/api/1.0/admin/record/moreAdd',
+    method: 'post',
+    params:data
   })
 }

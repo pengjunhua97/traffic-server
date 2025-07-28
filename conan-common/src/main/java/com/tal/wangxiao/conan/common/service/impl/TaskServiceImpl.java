@@ -205,14 +205,14 @@ public class TaskServiceImpl implements TaskService {
             log.info("查询任务详情失败："+e.getMessage());
             return new Result<>(ResponseCode.INVALID_TASK_ID,e.getMessage());
         }
-        Optional<Department> departmentOptional = departmentRepository.findById(task.getDepartmentId());
-        if(!departmentOptional.isPresent()){
-            return new Result<>(ResponseCode.INVALID_DEPARTMENT_ID,"查询失败，无效的部门ID:"+task.getDepartmentId());
-        }
+//        Optional<Department> departmentOptional = departmentRepository.findById(task.getDepartmentId());
+//        if(!departmentOptional.isPresent()){
+//            return new Result<>(ResponseCode.INVALID_DEPARTMENT_ID,"查询失败，无效的部门ID:"+task.getDepartmentId());
+//        }
         taskVO.setDeptId(task.getDepartmentId());
         taskVO.setTaskName(task.getName());
         taskVO.setTaskId(task.getId());
-        taskVO.setDeptName(departmentOptional.get().getDeptName());
+//        taskVO.setDeptName(departmentOptional.get().getDeptName());
         return new Result<>(ResponseCode.SUCCESS,taskVO);
     }
 

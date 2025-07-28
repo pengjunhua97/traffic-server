@@ -43,6 +43,9 @@ public class EsSource extends ConanBaseEntity {
     @ApiModelProperty("ES Bean名称(全英文)")
     private String esIp;
 
+    @ApiModelProperty("id")
+    private Integer id;
+
     /**
      * $column.columnComment
      */
@@ -88,6 +91,13 @@ public class EsSource extends ConanBaseEntity {
 
     public Integer getEsPort() {
         return esPort;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     @Override

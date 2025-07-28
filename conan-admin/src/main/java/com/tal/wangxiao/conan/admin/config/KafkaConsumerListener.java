@@ -56,7 +56,10 @@ public class KafkaConsumerListener {
             TaskMessage taskMessage = new ObjectMapper().readValue(body, TaskMessage.class);
             log.info("接收到agent 任务队列消息：{}", taskMessage.toString());
             String agentEnv = taskMessage.getData().getRunEnv();
-            String systemEnv = AdminCache.getEnv();
+            //String systemEnv = AdminCache.getEnv();
+
+            String systemEnv = agentEnv; //zc
+
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
             Map<String, Object> kafkaData = (LinkedHashMap) taskMessage.getData().getData();

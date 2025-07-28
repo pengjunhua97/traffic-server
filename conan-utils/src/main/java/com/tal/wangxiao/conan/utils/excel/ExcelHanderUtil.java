@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.ss.util.CellRangeAddress;
+
 /**
  * @author: dengkunnan
  * @date: 2020-07-12 00:45
@@ -177,8 +179,11 @@ public class ExcelHanderUtil {
         //通过构造方法创建writer
         if (!StringUtils.isEmpty(title)) {
             //合并单元格后的标题行，使用默认标题样式
-            writer.merge(firstRow, lastRow, 0, rows.get(0).size() - 1, title, true);
-
+            // 检查合并区域是否已经存在
+            if (!isMergedRegionExists(writer, firstRow, lastRow, 0, rows.get(0).size() - 1)) {
+                //合并单元格后的标题行，使用默认标题样式
+                writer.merge(firstRow, lastRow, 0, rows.get(0).size() - 1, title, true);
+            }
         }
         for (int i = 0; i <= lastRow; i++) {
             writer.passCurrentRow();
@@ -187,6 +192,17 @@ public class ExcelHanderUtil {
         writer.write(rows, true);
         writer.close();
         return file;
+    }
+
+    private static boolean isMergedRegionExists(ExcelWriter writer, int firstRow, int lastRow, int firstCol, int lastCol) {
+        CellRangeAddress newRegion = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
+        for (int i = 0; i < writer.getSheet().getNumMergedRegions(); i++) {
+            CellRangeAddress existingRegion = writer.getSheet().getMergedRegion(i);
+            if (existingRegion.equals(newRegion)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 

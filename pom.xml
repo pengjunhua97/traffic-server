@@ -31,7 +31,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
+        <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
         <spring-boot.version>2.3.7.RELEASE</spring-boot.version>
         <shiro.version>1.7.0</shiro.version>
         <thymeleaf.extras.shiro.version>2.0.0</thymeleaf.extras.shiro.version>
@@ -215,28 +215,28 @@
                 <version>${quartz.version}</version>
             </dependency>
 
-            <!-- 柯南公共工具 -->
+            <!-- 公共工具 -->
             <dependency>
                 <groupId>com.tal.wangxiao</groupId>
                 <artifactId>conan-common</artifactId>
                 <version>${conan.version}</version>
             </dependency>
 
-            <!-- 柯南admin系统模块 -->
+            <!-- admin系统模块 -->
             <dependency>
                 <groupId>com.tal.wangxiao</groupId>
                 <artifactId>conan-admin</artifactId>
                 <version>${conan.version}</version>
             </dependency>
 
-            <!-- 柯南agent核心模块 -->
+            <!-- agent核心模块 -->
             <dependency>
                 <groupId>com.tal.wangxiao</groupId>
                 <artifactId>conan-agent</artifactId>
                 <version>${conan.version}</version>
             </dependency>
 
-            <!-- 柯南system-framwork模块 -->
+            <!-- system-framwork模块 -->
             <dependency>
                 <groupId>com.tal.wangxiao</groupId>
                 <artifactId>conan-sys-api</artifactId>
@@ -369,10 +369,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <version>3.8.1</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                    <forceJavacCompilerUse>true</forceJavacCompilerUse>
                 </configuration>
             </plugin>
             <plugin>
@@ -384,6 +385,12 @@
                 </configuration>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
     </build>
 
 

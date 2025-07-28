@@ -16,6 +16,8 @@ import com.tal.wangxiao.conan.common.mapper.TaskApiRelationMapper;
 import com.tal.wangxiao.conan.common.domain.TaskApiRelation;
 import com.tal.wangxiao.conan.common.service.TaskApiRelationService;
 
+import javax.annotation.Resource;
+
 /**
  * taskApiRelationService业务层处理
  *
@@ -27,7 +29,7 @@ public class TaskApiRelationServiceImpl implements TaskApiRelationService {
     @Autowired
     private TaskApiRelationMapper taskApiRelationMapper;
 
-    @Autowired
+    @Resource
     private TaskMapper taskMapper;
 
     /**
@@ -118,9 +120,12 @@ public class TaskApiRelationServiceImpl implements TaskApiRelationService {
         if (taskApiRelationList.size() > 0 || dbApiList.size() > 0) {
             Task task = taskMapper.selectTaskById(taskId);
             task.setStatus(TaskStatus.READY.getValue());
+            taskMapper.updateTask(task);
         }
-        if(taskApiRelationList.size() < 1) {
-            return 1;
+        if (taskApiRelationList.size() <= 0 && dbApiList.size() <= 0) {
+            Task task = taskMapper.selectTaskById(taskId);
+            task.setStatus(TaskStatus.CONFIG.getValue());
+            taskMapper.updateTask(task);
         }
         return taskApiRelationMapper.insertTaskApiRelation(taskApiRelationList);
     }
@@ -156,5 +161,10 @@ public class TaskApiRelationServiceImpl implements TaskApiRelationService {
     @Override
     public int deleteTaskApiRelationById(Integer id) {
         return taskApiRelationMapper.deleteTaskApiRelationById(id);
+    }
+
+    @Override
+    public List<TaskApiRelationView> selectTaskApiRelationViewListByApiIds(String apiIds) {
+        return taskApiRelationMapper.selectTaskApiRelationViewListByApiIds(apiIds);
     }
 }

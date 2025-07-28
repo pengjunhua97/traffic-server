@@ -153,7 +153,7 @@ kafka:
     conan-agent-message: conan-agent-message
 
 server:
-  port: 8082 # 监听端口，本地开发如果被占用可以修改
+  port: 8083 # 监听端口，本地开发如果被占用可以修改
 # Swagger配置
 swagger:
   # 是否开启swagger

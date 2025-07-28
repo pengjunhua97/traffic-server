@@ -26,7 +26,7 @@
 
     <select id="selectApiList" parameterType="ApiInfo" resultMap="ApiResult">
 
-        select api.*, domain.name as domain_name, d.dept_name as dept_name, u.user_name as create_by_name
+        select api.*, domain.name as domainName, d.dept_name as dept_name, u.user_name as create_by_name
         from bss_api api LEFT JOIN bss_domain  domain ON domain.id = api.domain_id
         LEFT  JOIN sys_dept d on api.sys_dept_id = d.dept_id
         LEFT  JOIN sys_user u on api.create_by = u.user_id

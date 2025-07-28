@@ -13,7 +13,7 @@
     <artifactId>conan-agent</artifactId>
 
     <name>conan-agent</name>
-    <description>柯南agent核心执行模块</description>
+    <description>agent核心执行模块</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -33,10 +33,17 @@
         </dependency>
 
         <!-- spring-boot-devtools -->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-devtools</artifactId>-->
+<!--            <optional>true</optional> &lt;!&ndash; 表示依赖不会传递 &ndash;&gt;-->
+<!--        </dependency>-->
+
+        <!-- SpringBoot集成单元测试 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <optional>true</optional> <!-- 表示依赖不会传递 -->
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <!-- Json比对工具 -->
@@ -80,6 +87,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>1.5.3.RELEASE</version>
                 <configuration>
                     <!-- 本地jar打包 -->
                     <includeSystemScope>true</includeSystemScope>
@@ -95,7 +103,7 @@
             </plugin>
 
         </plugins>
-        <finalName>${project.artifactId}</finalName>
+        <finalName>uusense-agent</finalName>
     </build>
 
    <!-- <build>

@@ -21,6 +21,7 @@ import com.tal.wangxiao.conan.utils.http.CurlUtils;
 import com.tal.wangxiao.conan.utils.json.JsonChangesUtils;
 import com.tal.wangxiao.conan.utils.str.StringHandlerUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -237,11 +238,21 @@ public class ReplayServiceImpl implements ReplayService {
                     if (domainAuth.getKeyType() == 1) {
                         cookieResponse = CurlUtils.getBodyByCurl(domainAuth.getCurlUrl());
                         cookieResponse = JsonChangesUtils.getValueByJsonPath(cookieResponse, domainAuth.getResponseGetCookieKey());
+                        domainAuth.setCookie(cookieResponse);
                     } else if (domainAuth.getKeyType() == 2) {
-                        cookieResponse = CurlUtils.getCookieByCurl(domainAuth.getCurlUrl(), domainAuth.getResponseGetCookieKey());
+                        if (domainAuth.getResponseGetCookieKey().contains("token")) {
+                            if (StringUtils.isNotBlank(domainAuth.getCookie())) {
+                                headerMap.put("token", domainAuth.getCookie().trim());
+                            }else {
+                                log.error("该域名{}未配置token信息，请回到鉴权页面配置token信息", domainName);
+                                throw new ReplayException("该域名" + domainName + "未配置token信息，请回到鉴权页面配置token信息", ReplayException.Code.REPLAY_REQUEST_FAIL);
+                            }
+                        } else {
+                            cookieResponse = CurlUtils.getCookieByCurl(domainAuth.getCurlUrl(), domainAuth.getResponseGetCookieKey());
+                            headerMap.put("Cookie",cookieResponse);
+                            domainAuth.setCookie(cookieResponse);
+                        }
                     }
-                    headerMap.put("Cookie",cookieResponse);
-                    domainAuth.setCookie(cookieResponse);
                     domainAuth.setUpdateTime(LocalDateTime.now());
                     domainAuthRepository.save(domainAuth);
                 } catch (Exception e) {
@@ -258,6 +269,7 @@ public class ReplayServiceImpl implements ReplayService {
                 log.error(errMsg);
                 redisTemplateTool.setLogByReplayId_ERROR(replayId, errMsg);
             }
+
 
             if (!Objects.isNull(response)) {
                 try {
@@ -293,7 +305,7 @@ public class ReplayServiceImpl implements ReplayService {
         String response = "";
         try {
             response = HttpUtil.request(HttpMethod.valueOf(method), url, body, headerMap, String.class, HttpUtil.Type.JSON);
-        } catch (RestClientException e1) {
+        } catch (Exception e1) {
             log.error("该接口请求可能是非json请求 ，将采用form请求重试,err_msg = " + e1.getMessage());
             try {
                 response = HttpUtil.request(HttpMethod.valueOf(method), url, body, headerMap, String.class, HttpUtil.Type.FORM);
@@ -329,7 +341,7 @@ public class ReplayServiceImpl implements ReplayService {
         if (!Objects.isNull(response)) {
             try {
                 redisTemplate.opsForValue().set(key, response, CodeCache.getRedisCacheTime(), TimeUnit.DAYS);
-                redisTemplate.opsForValue().set(key + "-body", "requestId=" + requestId + "\n" + "原body=" + oldBody + "\n" + "新body=" + body);
+                redisTemplate.opsForValue().set(key + "-body", "requestId=" + requestId + "原body=" + oldBody + "新body=" + body);
                 log.info("返回结果写入redis: key = " + key);
             } catch (Exception e) {
                 //把对应的回放ID的日志写入Redis, key='logByreplayId='+replayId

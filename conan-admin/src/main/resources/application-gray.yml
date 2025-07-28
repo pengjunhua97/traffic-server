@@ -13,7 +13,7 @@ spring:
   kafka:
     bootstrap-servers: 127.0.0.1:9092
     consumer:
-      group-id: conan-agent-gray0
+      group-id: conan-admin-gray0
   data:
     elasticsearch:
       cluster-name: xes_log_cluster_wg
@@ -22,7 +22,7 @@ spring:
   jackson:
     time-zone: Asia/Shanghai    #或UTC
 admin:
-  env: GRAY
+  env: gray
   #录制流量单接口条数阈值
   record-api-count: 100
   #录制流量对应的学生数

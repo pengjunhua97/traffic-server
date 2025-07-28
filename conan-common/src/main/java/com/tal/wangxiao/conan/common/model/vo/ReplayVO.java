@@ -46,4 +46,10 @@ public class ReplayVO {
 
     @JsonProperty(value = "replay_type", index = 6)
     private Integer replayType;
+
+    @JsonProperty(value = "has_baseline")
+    private Integer hasBaseLine;
+
+    @JsonProperty(value = "diffed")
+    private Integer diffed;
 }

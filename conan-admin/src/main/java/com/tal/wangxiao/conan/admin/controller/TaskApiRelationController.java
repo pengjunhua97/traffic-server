@@ -134,4 +134,9 @@ public class TaskApiRelationController extends ConanBaseController {
     public ApiResponse remove(@PathVariable Integer[] ids) {
         return toAjax(taskApiRelationService.deleteTaskApiRelationByIds(ids));
     }*/
+    @GetMapping(value = "apiIds/{apiIds}")
+    public ApiResponse<TaskApiRelationView> getInfoByDomainId(@PathVariable("apiIds") String apiIds) {
+        List<TaskApiRelationView> list = taskApiRelationService.selectTaskApiRelationViewListByApiIds(apiIds);
+        return ApiResponse.success(list);
+    }
 }

@@ -46,6 +46,11 @@ public class EsSourceController extends ConanBaseController {
     public ApiResponse<PageInfoResponse<List<EsSource>>> list(EsSource esSource) {
         startPage();
         List<EsSource> list = esSourceService.selectEsSourceList(esSource);
+        if (list != null && list.size() > 0) {
+            for (EsSource esSource1 : list) {
+                esSource1.setId(esSource1.getEsSourceId());
+            }
+        }
         return getDataTable(list);
     }
 
@@ -67,7 +72,11 @@ public class EsSourceController extends ConanBaseController {
     @PreAuthorize("@ss.hasPermi('common:esDataSource:query')")
     @GetMapping(value = "/{esSourceId}")
     public ApiResponse<EsSource> getInfo(@PathVariable("esSourceId") Integer esSourceId) {
-        return ApiResponse.success(esSourceService.selectEsSourceById(esSourceId));
+        EsSource esSource = esSourceService.selectEsSourceById(esSourceId);
+        if (esSource != null) {
+            esSource.setId(esSource.getEsSourceId());
+        }
+        return ApiResponse.success(esSource);
     }
 
     /**

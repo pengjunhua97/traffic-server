@@ -33,14 +33,15 @@ import com.tal.wangxiao.conan.sys.framework.web.service.TokenService;
 import com.tal.wangxiao.conan.utils.json.JsonChangesUtils;
 import com.tal.wangxiao.conan.utils.str.StringHandlerUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 比对记录Service业务层处理
@@ -262,7 +263,7 @@ public class DiffServiceImpl implements DiffService {
             }
             //获取body信息
             try {
-                requestBody = redisTemplate.opsForValue().get(requestId + "-" + recordId + "-" + replayId + "-" + apiId + "-body")+"";
+                requestBody = redisTemplate.opsForValue().get(requestId + "-" + recordId + "-" + replayId + "-" + apiId + "-body");
                 requestBody = splitStrDelete(requestBody);
             } catch (Exception e) {
                 log.error("获取body信息失败，无效的redis key");
@@ -280,7 +281,9 @@ public class DiffServiceImpl implements DiffService {
             if (flag) {
                 apiLogInfo.setCompareData(compareData);
                 apiLogInfo.setBaseData(baseData);
-                apiLogInfo.setRequestBody(requestBody);
+                Map<String, String> stringStringMap = splitStr(requestBody);
+                apiLogInfo.setOldBody(stringStringMap.get("request_body_record"));
+                apiLogInfo.setNewBody(stringStringMap.get("request_body"));
             } else {
                 try {
                     apiLogInfo.setCompareData(compareData.trim().split("style")[0]);
@@ -297,6 +300,33 @@ public class DiffServiceImpl implements DiffService {
 
         }
         return ApiResponse.success("获取diff 详细信息成功", apiDiffDetailInfo);//.success("", resultMap);
+    }
+
+    public Map<String,String> splitStr(String str) {
+        System.out.println("响应数据：" + str);
+        Map<String,String> map = new HashMap<>();
+        if (StringUtils.isNotBlank(str)) {
+            // 定义正则表达式
+            Pattern pattern = Pattern.compile("\"requestId=([^原]+)原body=(.*)新body=(.*)\"$");
+            Matcher matcher = pattern.matcher(str);
+
+            String requestId = null;
+            String oldBody = null;
+            String newBody = null;
+            if (matcher.find()) {
+                requestId = matcher.group(1);
+                oldBody = matcher.group(2).isEmpty() ? null : matcher.group(2);
+                newBody = matcher.group(3).isEmpty() ? null : matcher.group(3);
+
+                System.out.println("requestId: " + requestId);
+                System.out.println("原body: " + oldBody);
+                System.out.println("新body: " + newBody);
+            }
+            map.put("requestId",requestId);
+            map.put("request_body_record",oldBody);
+            map.put("request_body",newBody);
+        }
+        return map;
     }
 
     private String splitStrDelete(String str) {

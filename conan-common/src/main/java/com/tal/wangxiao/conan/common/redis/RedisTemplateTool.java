@@ -50,7 +50,7 @@ public class RedisTemplateTool {
 
     //回放日志
     public void setLogByReplayId_INFO(Integer replayId, String errorDesc) {
-        redisTemplateLog.opsForValue().append("replayLog=" + replayId, new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()) + " [INFO]   --" + errorDesc + "\n");
+        redisTemplateLog.opsForValue().append("replayLog=" + replayId, new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()) + " [INFO]  --" + errorDesc + "\n");
     }
 
     public void setLogByReplayId_ERROR(Integer replayId, String errorDesc) {
@@ -62,7 +62,7 @@ public class RedisTemplateTool {
     }
 
     public void setLogByReplayId_END(Integer replayId, String errorDesc) {
-        redisTemplateLog.opsForValue().append("replayLog=" + replayId, new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()) + " [INFO]   --" + errorDesc + "(end)");
+        redisTemplateLog.opsForValue().append("replayLog=" + replayId, new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()) + " [INFO]  --" + errorDesc + "(end)");
     }
 
     public void setRecordProgress(Integer recordId, String progress) {
@@ -92,11 +92,11 @@ public class RedisTemplateTool {
     }
 
     public void setLogByDiffId_END(Integer diffId, String errorDesc) {
-        redisTemplateLog.opsForValue().append("diffLog=" + diffId, new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()) + " [INFO]   --" + errorDesc + "(end)");
+        redisTemplateLog.opsForValue().append("diffLog=" + diffId, new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()) + " [INFO]  --" + errorDesc + "(end)");
     }
 
     public void setLogByDiffId_INFO(Integer diffId, String errorDesc) {
-        redisTemplateLog.opsForValue().append("diffLog=" + diffId, new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()) + " [INFO]   --" + errorDesc + "\n");
+        redisTemplateLog.opsForValue().append("diffLog=" + diffId, new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()) + " [INFO]  --" + errorDesc + "\n");
     }
 
     public void setDiffProgress(Integer diff, String progress) {

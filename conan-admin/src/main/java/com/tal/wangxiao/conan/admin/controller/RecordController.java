@@ -6,6 +6,7 @@ import com.tal.wangxiao.conan.admin.service.ReplayService;
 import com.tal.wangxiao.conan.common.api.ApiResponse;
 import com.tal.wangxiao.conan.common.api.ResponseCode;
 import com.tal.wangxiao.conan.common.controller.ConanBaseController;
+import com.tal.wangxiao.conan.common.entity.db.RecordResult;
 import com.tal.wangxiao.conan.common.model.Result;
 import com.tal.wangxiao.conan.common.model.bo.RecordInfo;
 import io.swagger.annotations.Api;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * 任务回放Controller
@@ -71,6 +73,44 @@ public class RecordController extends ConanBaseController {
                              HttpServletResponse response) throws Exception, IOException {
         log.info("RecordController#downloadByDomain:"+domainName);
         recordService.getGetFlowsByDomain(domainName,response);
+    }
+
+    @ApiOperation(value = "通过Es查询获取日志中的接口流量", notes = "通过Es查询获取日志中的接口流量",produces = "application/json")
+    @GetMapping(value = "/downloadByEsQuery")
+    public void downloadByEsQuery(@RequestParam(value = "domain",required = false) String domainName,
+                                 @RequestParam(value = "request",required = false) String request,
+                                 @RequestParam(value = "method",required = false) String method,
+                                 @RequestParam(value = "startTime",required = false) String startTime,
+                                 @RequestParam(value = "endTime",required = false) String endTime,
+                                 HttpServletResponse response) throws Exception, IOException {
+        log.info("RecordController#downloadByEsQuery: domainName"+ domainName + ",request:"+request + ",method:"+method);
+        recordService.getGetFlowsByEsQuery(domainName,request,method,startTime,endTime,response);
+    }
+
+    @ApiOperation(value = "通过Es查询获取日志中的接口并批量添加", notes = "通过Es查询获取日志中的接口流量",produces = "application/json")
+    @PostMapping(value = "/moreAdd")
+    public ApiResponse moreAdd(@RequestParam(value = "domain",required = false) String domainName,
+                                  @RequestParam(value = "request",required = false) String request,
+                                  @RequestParam(value = "method",required = false) String method,
+                                  @RequestParam(value = "startTime",required = false) String startTime,
+                                  @RequestParam(value = "endTime",required = false) String endTime) throws Exception, IOException {
+        log.info("RecordController#moreAdd: domainName"+ domainName + ",request:"+request + ",method:"+method);
+        return toAjax(recordService.moreAdd(domainName,request,method,startTime,endTime));
+    }
+
+    @ApiOperation(value = "获取录制接口结果数据", notes = "获取录制接口结果数据",produces = "application/json")
+    @GetMapping(value = "/result")
+    public ApiResponse<RecordResult> recordResult(@RequestParam(value = "apiId") Integer apiId,
+                                                  @RequestParam(value = "recordId") Integer recordId) throws Exception{
+        Result<Object> result = recordService.recordResult(apiId,recordId);
+        return new ApiResponse(result);
+    }
+
+    @ApiOperation(value = "保存录制接口结果数据", notes = "保存录制接口结果数据",produces = "application/json")
+    @PostMapping(value = "/save")
+    public ApiResponse<RecordResult> saveRecordResult(@RequestBody RecordResult recordResult) throws Exception{
+        Result<Object> result = recordService.saveRecordResult(recordResult);
+        return new ApiResponse(result);
     }
 
 

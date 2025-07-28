@@ -8,6 +8,7 @@ import com.tal.wangxiao.conan.common.utils.DownloadFileUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,6 +33,9 @@ public class ExcelController {
     @Resource
     private ExcelService excelService;
 
+    @Value("${file.upload.path}")
+    private String filePath;
+
     @ApiOperation(value = "解析excel导入API接口", notes = "导入excel")
     @PostMapping(value = "")
     public ApiResponse<String> importIntoApi(@RequestParam(value = "excel",required = false) MultipartFile excelFile){
@@ -45,9 +49,9 @@ public class ExcelController {
     public void downloadFileNoDeleteByDomain(@RequestParam(value = "domain",required = false) String domainName,
                                              HttpServletResponse response) throws Exception {
         log.info("EsConroller#downloadFileNoDeleteByDomain");
-        String path = ResourceUtils.getURL("classpath:").getPath() + "static/";//+domain+"域名接口.xlsx";
+//        String path = ResourceUtils.getURL("classpath:").getPath() + "static/";//+domain+"域名接口.xlsx";
         String name = domainName+".xlsx";
-        File file = new File(path + name);
+        File file = new File(filePath + name);
         DownloadFileUtil.downloadFileNoDelete(name,file,response);
     }
 
@@ -55,9 +59,9 @@ public class ExcelController {
     @GetMapping(value = "/deleteFileByDomain")
     public ApiResponse<String> deleteFileByDomain(@RequestParam(value = "domain",required = false) String domainName) throws Exception {
         log.info("EsConroller#deleteFileByDomain");
-        String path = ResourceUtils.getURL("classpath:").getPath() + "static/";//+domain+"域名接口.xlsx";
+//        String path = ResourceUtils.getURL("classpath:").getPath() + "static/";//+domain+"域名接口.xlsx";
         String name = domainName+".xlsx";
-        File file = new File(path + name);
+        File file = new File(filePath + name);
         try {
             if(!file.delete()){
                 return  new ApiResponse<>(new Result<>(ResponseCode.SUCCESS,"文件删除失败"));

@@ -32,3 +32,19 @@ export function getDetailByRecord (data) {
     params:data
   })
 }
+// 查询录制接口结果
+export function getRecordResult (data) {
+  return request({
+    url: '/api/1.0/admin/record/result',
+    method: 'get',
+    params:data
+  })
+}
+// 保存录制接口结果
+export function saveRecordResult (data) {
+  return request({
+    url: '/api/1.0/admin/record/save',
+    method: 'post',
+    data
+  })
+}

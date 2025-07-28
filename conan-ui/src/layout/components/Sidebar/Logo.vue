@@ -6,9 +6,10 @@
         <img src="../../../assets/images/profile.png" alt="" style="width:32px;height:32px;line-height: 50px;margin-right: 15px;">
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link isImg" to="/">
-        <!-- <i class="icon-zhibo iconfont sidebar-logo"></i> -->
+        <!-- <i class="icon-zhibo iconfont sidebar-logo"></i>
        <img src="../../../assets/images/profile.png" alt="" style="width:32px;height:32px;line-height: 50px;margin-right: 15px;">
         <h1 class="sidebar-title icon-kenan iconfont " :style="{ color: sideTheme === 'theme-dark' ? variables.sidebarTitle : variables.sidebarLightTitle }"></h1>
+      -->
       </router-link>
     </transition>
   </div>
@@ -36,7 +37,7 @@ export default {
   },
   data() {
     return {
-      title: '柯南流量回放平台',
+      title: '流量回放平台',
     }
   }
 }

@@ -3,11 +3,14 @@ package com.tal.wangxiao.conan.admin.service;
 import com.google.common.collect.Lists;
 import com.tal.wangxiao.conan.admin.constant.HttpMethod;
 import com.tal.wangxiao.conan.common.entity.db.Record;
+import com.tal.wangxiao.conan.common.entity.db.RecordResult;
 import com.tal.wangxiao.conan.common.model.Result;
 import org.springframework.scheduling.annotation.Async;
 
 import javax.servlet.http.HttpServletResponse;
+import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -34,4 +37,11 @@ public interface RecordService {
     @Async
     void getGetFlowsByDomain(String domainName, HttpServletResponse response) throws Exception;
 
+    void getGetFlowsByEsQuery(String domainName,String request,String method,String startTime,String endTime, HttpServletResponse response);
+
+    int moreAdd(String domainName, String request, String method, String startTime, String endTime) throws ParseException;
+
+    Result<Object> recordResult(Integer apiId, Integer recordId);
+
+    Result<Object> saveRecordResult(RecordResult recordResult);
 }

@@ -114,6 +114,7 @@
             v-model="form.domain"
             filterable
             placeholder="请输入域名名称"
+            style="width: 100%"
           >
             <el-option
               v-for="item in domainOptions"
@@ -123,6 +124,39 @@
             >
             </el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="请求接口名称">
+          <el-input placeholder="请输入接口名称" v-model="form.request" style="width: 100%"></el-input>
+        </el-form-item>
+        <el-form-item label="http方法" prop="method">
+          <el-select
+            v-model="form.method"
+            clearable
+            placeholder="http方法"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="(item, index) in methodOptions"
+              :key="index"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <!--时间范围查询-->
+        <el-form-item label="时间范围">
+          <el-date-picker
+            v-model="dateRange"
+            type="datetimerange"
+            range-separator="至"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            format="yyyy-MM-dd HH:mm:ss"
+            @change="handleDateChange"
+            style="width: 100%"
+          ></el-date-picker>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -181,6 +215,8 @@ export default {
       },
       // 表单参数
       form: {},
+      methodOptions: [],
+      dateRange: [], // 用于绑定时间范围选择器
       // 表单校验
       rules: {
         ruleJson: [{ domain: true, message: "域名不能为空", trigger: "blur" }]
@@ -190,7 +226,25 @@ export default {
   created() {
     this.getTreeselect();
   },
+  mounted() {
+    this.initData();
+  },
   methods: {
+    // 初始化数据
+    initData() {
+      this.getDicts("bss_method_status").then(response => {
+        this.methodOptions = response.data;
+      });
+    },
+    handleDateChange(value) {
+      if (value && value.length === 2) {
+        this.form.startTime = value[0];
+        this.form.endTime = value[1];
+      } else {
+        this.form.startTime = '';
+        this.form.endTime = '';
+      }
+    },
     // 域名id下拉框
     getDomainList() {
       listDomain()
@@ -227,7 +281,7 @@ export default {
           this.loading = false;
         });
     },
-  
+
     /** 转换接口管理数据结构 */
     normalizer(node) {
       if (node.children && !node.children.length) {
@@ -261,7 +315,8 @@ export default {
         });
     },
     downLoadZip(row, filename) {
-      let reg = /[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62}\.)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}/;
+      console.log("源数据是", row.domain);
+      let reg = /(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):(\d{1,5})/;
       axios({
         method: "get",
         url:
@@ -372,16 +427,15 @@ export default {
           excelDownloadByDomain(this.form).then(response => {
             this.msgSuccess("获取网关该域名下接口列表时间较长，请稍后刷新查看");
             this.open = false;
-            if (response.code==200) {
-              this.getList();
-            }
+            this.dateRange = []; // 清空时间范围
+            this.getList();
           });
         }
       });
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      let reg = /[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62}\.)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}/;
+      let reg = /(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):(\d{1,5})/;
       const ids = row.domain.match(reg)[0];
       this.$confirm("是否确认删除该数据项?", "警告", {
         confirmButtonText: "确定",

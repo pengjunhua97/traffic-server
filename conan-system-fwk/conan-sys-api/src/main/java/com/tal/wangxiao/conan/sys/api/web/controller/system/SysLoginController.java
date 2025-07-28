@@ -1,6 +1,8 @@
 package com.tal.wangxiao.conan.sys.api.web.controller.system;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.tal.wangxiao.conan.sys.auth.core.domain.model.LoginUser;
@@ -55,6 +57,19 @@ public class SysLoginController {
         return ajax;
     }
 
+    @PostMapping("/auth/login")
+    public Map<String,Object> authLogin(@RequestBody LoginBody loginBody) {
+        Map<String,Object> map = new HashMap<>();
+        // 生成令牌
+        String token = loginService.authLogin(loginBody.getUsername(), loginBody.getPassword());
+        Map<String,Object> data = new HashMap<>();
+        data.put("token", token);
+        map.put("data", data);
+        map.put("code", 200);
+        map.put("msg", "请求成功");
+        return map;
+    }
+
     /**
      * 获取用户信息
      *
@@ -73,6 +88,27 @@ public class SysLoginController {
         ajax.put("roles", roles);
         ajax.put("permissions", permissions);
         return ajax;
+    }
+
+    @GetMapping("/auth/getUserInfo")
+    public Map<String,Object> getUserInfo() {
+        Map<String,Object> map = new HashMap<>();
+        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+        SysUser user = loginUser.getUser();
+        // 角色集合
+        Set<String> roles = permissionService.getRolePermission(user);
+        // 权限集合
+        Set<String> permissions = permissionService.getMenuPermission(user);
+        Map<String,Object> data = new HashMap<>();
+        data.put("id", user.getUserId());
+        data.put("username", user.getUserName());
+        data.put("nickname", user.getNickName());
+        data.put("roles", roles);
+        data.put("permissions", permissions);
+        map.put("data", data);
+        map.put("code", 200);
+        map.put("msg", "请求成功");
+        return map;
     }
 
     /**

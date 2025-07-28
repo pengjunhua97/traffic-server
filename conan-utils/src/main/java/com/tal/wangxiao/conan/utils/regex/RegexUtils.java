@@ -18,12 +18,29 @@ public class RegexUtils {
         if("".equals(regex)||Objects.isNull(regex)){
             return msg;
         }
+        // 反转义处理
+        regex = regex.replaceAll("\\\\\\\\", "\\\\");
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher= pattern.matcher(msg);
         while (matcher.find()){
             return matcher.group();
         }
         return null;
+    }
+
+    public static void main(String[] args) {
+        String msg = "POST /api/testman/organize/getMyOrganizeList HTTP/1.1";
+        String regexFromDb = "(?<=\\\\s)(\\\\/\\\\S+)(?=\\\\s)";
+        // 反转义处理
+        String regex = regexFromDb.replaceAll("\\\\\\\\", "\\\\");
+        if("".equals(regex)||Objects.isNull(regex)){
+            System.out.println(msg);
+        }
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher= pattern.matcher(msg);
+        while (matcher.find()){
+            System.out.println(matcher.group());
+        }
     }
 
 }

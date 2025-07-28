@@ -38,6 +38,17 @@ public class TaskExecutionInfo extends ConanBaseEntity
     @ApiModelProperty("任务名称")
     private String taskName;
 
+    @ApiModelProperty("是否删除")
+    private Integer isDelete;
+
+    public Integer getIsDelete() {
+        return isDelete;
+    }
+
+    public void setIsDelete(Integer isDelete) {
+        this.isDelete = isDelete;
+    }
+
     public String getDeptName() {
         return deptName;
     }
@@ -110,6 +121,7 @@ public class TaskExecutionInfo extends ConanBaseEntity
                 .append("createBy", getCreateBy())
                 .append("updateTime", getUpdateTime())
                 .append("updateBy", getUpdateBy())
+                .append("isDelete", getIsDelete())
                 .toString();
     }
 }

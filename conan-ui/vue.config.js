@@ -6,7 +6,7 @@ function resolve (dir) {
   return path.join(__dirname, dir)
 }
 
-const name = defaultSettings.title || '柯南流量回放平台' // 标题
+const name = defaultSettings.title || '流量回放平台' // 标题
 
 const port = process.env.port || process.env.npm_config_port || 8080 // 端口
 

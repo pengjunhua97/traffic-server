@@ -280,6 +280,29 @@ public class DiffServiceImpl implements AgentDiffService {
         }
     }
 
+    public static void main(String[] args) {
+        try {
+            // 假设这是您的两个JSON字符串
+            String baseJson = "{\"name\":\"John\", \"age\":30}";
+            String compareJson = "{\"name\":\"John\", \"age\":25}";
+
+            // 执行比较
+            JSONCompareResult result = JSONKeyCompare.compareJSON_FFTTF(baseJson, compareJson);
+
+            // 处理比较结果
+            if (result.isSuccess()) {
+                System.out.println("JSON完全匹配");
+            } else {
+                System.out.println("发现差异：");
+                // 打印差异详情
+                result.getFieldVlueFailures().forEach(System.out::println);
+            }
+        }catch (Exception e) {
+            log.error("jsonCompareResult = " + e);
+            e.printStackTrace();
+        }
+    }
+
 
     private void jsonCompareKeyHandler(HashMap<Integer, Object> resultMap, DiffMode diffMode) {
 
