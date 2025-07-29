@@ -1,13 +1,12 @@
 package com.tal.wangxiao.conan.utils.diff;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.tal.wangxiao.conan.utils.diff.core.TextDiffResult;
 import com.tal.wangxiao.conan.utils.diff.diff_match_patch.Diff;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -92,6 +91,22 @@ public class TextDiffUtils {
                 diffMsgCount += stringDiff.text.length();
             }
         }
+        List<Map<String, String>> maps = Lists.newArrayList();  //存放的结果集
+        diff_main.forEach(diff -> {
+            Map<String, String> map = Maps.newHashMap();
+            if(diff_match_patch.Operation.EQUAL.equals(diff.operation)){  //无操作
+                map.put("key",diff_match_patch.Operation.EQUAL.name());
+                map.put("value",diff.text);
+            }else if(diff_match_patch.Operation.DELETE.equals(diff.operation)){   //删除
+                map.put("key",diff_match_patch.Operation.DELETE.name());
+                map.put("value",diff.text);
+            }else if(diff_match_patch.Operation.INSERT.equals(diff.operation)){   //插入
+                map.put("key",diff_match_patch.Operation.INSERT.name());
+                map.put("value",diff.text);
+            }
+            maps.add(map);
+        });
+        System.out.println("比较结果输出：" + maps);
         textDiffResult.setTotalMsgCount(totalMsgCount);
         textDiffResult.setDiffMsgCount(diffMsgCount);
         textDiffResult.setEqual(false);
