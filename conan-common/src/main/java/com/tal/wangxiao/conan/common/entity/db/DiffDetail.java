@@ -30,4 +30,10 @@ public class DiffDetail {
 
     @Column(name = "actual_count")
     private Integer actualCount;
+
+    @Column(name = "total_count")
+    private Integer totalCount;
+
+    @Column(name = "same_count")
+    private Integer sameCount;
 }

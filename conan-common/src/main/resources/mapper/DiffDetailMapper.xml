@@ -39,12 +39,16 @@
             <if test="apiId != null">api_id,</if>
             <if test="diffId != null">diff_id,</if>
             <if test="expectCount != null">expect_count,</if>
+            <if test="totalCount != null">total_count,</if>
+            <if test="sameCount != null">same_count,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="actualCount != null">#{actualCount},</if>
             <if test="apiId != null">#{apiId},</if>
             <if test="diffId != null">#{diffId},</if>
             <if test="expectCount != null">#{expectCount},</if>
+            <if test="totalCount!= null">#{totalCount},</if>
+            <if test="sameCount!= null">#{sameCount},</if>
         </trim>
     </insert>
 

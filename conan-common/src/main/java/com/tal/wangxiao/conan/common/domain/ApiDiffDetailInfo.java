@@ -24,6 +24,9 @@ public class ApiDiffDetailInfo  {
     @ApiModelProperty("接口名")
     String apiName;
 
+    @ApiModelProperty("similarity")
+    private float similarity;
+
     @ApiModelProperty("比对日志列表")
     List<DiffApiLogInfo> diffApiLogInfoList;
 }

@@ -9,6 +9,8 @@ import com.tal.wangxiao.conan.common.repository.db.DomainRepository;
 import com.tal.wangxiao.conan.common.repository.db.UserRepository;
 import com.tal.wangxiao.conan.common.utils.spring.SpringBeanUtil;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Optional;
 
 /**
@@ -32,7 +34,9 @@ public class DiffDetailDetailConverter extends AbstractObjectConverter<DiffDetai
         diffDetailVO.setApiCount(diffDetail.getExpectCount());
         diffDetailVO.setDiffDetailId(diffDetail.getId());
         //计算成功率
-        diffDetailVO.setDiffSuccessRate((diffDetail.getActualCount()*100.0)/diffDetail.getExpectCount());
+        diffDetailVO.setDiffSimilarity(BigDecimal.valueOf((diffDetail.getSameCount()*100.0)/diffDetail.getTotalCount())
+                .setScale(2, RoundingMode.HALF_UP)
+                .floatValue());
         //获取域名和接口名
         Optional<Api> apiOptional = apiRepository.findById(diffDetail.getApiId());
         if(apiOptional.isPresent()){

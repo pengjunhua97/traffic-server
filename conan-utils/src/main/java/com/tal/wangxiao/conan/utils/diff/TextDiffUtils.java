@@ -6,6 +6,7 @@ import com.tal.wangxiao.conan.utils.diff.core.TextDiffResult;
 import com.tal.wangxiao.conan.utils.diff.diff_match_patch.Diff;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.Resource;
 import java.util.*;
 
 
@@ -109,7 +110,7 @@ public class TextDiffUtils {
         System.out.println("比较结果输出：" + maps);
         textDiffResult.setTotalMsgCount(totalMsgCount);
         textDiffResult.setDiffMsgCount(diffMsgCount);
-        textDiffResult.setEqual(false);
+        textDiffResult.setEqual(true);
         return textDiffResult;
 
     }

@@ -29,7 +29,7 @@ public class DiffDetailVO {
     private Integer apiCount;
 
     @ApiModelProperty("比对成功率")
-    private Double diffSuccessRate;
+    private float diffSimilarity;
 
     @ApiModelProperty("比对Id")
     private Integer diffId;

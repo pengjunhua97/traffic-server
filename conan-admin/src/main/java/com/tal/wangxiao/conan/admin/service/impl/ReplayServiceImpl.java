@@ -261,9 +261,9 @@ public class ReplayServiceImpl implements ReplayService {
             Map<String, String> splitStr = splitStr(requestBody);
             System.out.println("转化前的json对象：" + response);
             // 如果字符串可能被多次转义
-            JSONObject jsonObject = safeParse(response);
-            System.out.println("转化后的json对象：" + jsonObject);
-            oneApiDetailMap.put("response", jsonObject);
+//            JSONObject jsonObject = safeParse(response);
+//            System.out.println("转化后的json对象：" + jsonObject);
+            oneApiDetailMap.put("response", response);
             oneApiDetailMap.put("requestId", splitStr.get("requestId"));
             oneApiDetailMap.put("request_body_record", splitStr.get("request_body_record"));
             oneApiDetailMap.put("request_body", splitStr.get("request_body"));
@@ -313,8 +313,8 @@ public class ReplayServiceImpl implements ReplayService {
                 System.out.println("新body: " + newBody);
             }
             map.put("requestId",requestId);
-            map.put("request_body_record",oldBody);
-            map.put("request_body",newBody);
+            map.put("request_body_record","\"" + oldBody + "\"" );
+            map.put("request_body","\"" + newBody + "\"" );
         }
         return map;
     }

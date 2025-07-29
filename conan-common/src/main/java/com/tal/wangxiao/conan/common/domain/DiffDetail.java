@@ -43,6 +43,11 @@ public class DiffDetail extends ConanBaseEntity {
     @ApiModelProperty("${comment}")
     private Integer diffId;
 
+    @ApiModelProperty("${comment}")
+    private Integer totalCount;
+
+    @ApiModelProperty("${comment}")
+    private Integer sameCount;
     /**
      * $column.columnComment
      */
@@ -88,6 +93,20 @@ public class DiffDetail extends ConanBaseEntity {
 
     public void setDiffDetailId(Integer diffDetailId) {
         this.diffDetailId = diffDetailId;
+    }
+
+
+    public Integer getTotalCount() {
+        return totalCount;
+    }
+    public void setTotalCount(Integer totalCount) {
+        this.totalCount = totalCount;
+    }
+    public Integer getSameCount() {
+        return sameCount;
+    }
+    public void setSameCount(Integer sameCount) {
+        this.sameCount = sameCount;
     }
 
     @Override

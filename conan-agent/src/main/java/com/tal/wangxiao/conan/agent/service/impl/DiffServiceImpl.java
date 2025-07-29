@@ -35,6 +35,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -340,9 +342,11 @@ public class DiffServiceImpl implements AgentDiffService {
         Set<String> keys = stringRedisTemplate.keys(prefix);
         //diff_detail 中的actual_count diff结果相同接口个数
         int actual_count = 0;
+        int total_count = 0;
         //diff_detail 中的expect_count 接口总数
         float successRate = 0;
         int expect_count = 0;
+        int same_count = 0;
         for (String key : keys) {
             log.error("key = " + key);
             Object obj = redisTemplateLog.opsForValue().get(key);
@@ -353,8 +357,10 @@ public class DiffServiceImpl implements AgentDiffService {
             DiffResultInRedis diffResultInRedis = (DiffResultInRedis) obj;
             //diff_detail 中的actual_count2
             expect_count++;
+            total_count = total_count + diffResultInRedis.getAllKeysNu();
             if (diffResultInRedis.isDiffResult() == true) {
                 actual_count++;
+                same_count = same_count + diffResultInRedis.getSameKeyNu();
             }
         }
         if (expect_count != 0) {
@@ -362,13 +368,19 @@ public class DiffServiceImpl implements AgentDiffService {
             diffDetail.setApiId(apiId);
             diffDetail.setExpectCount(expect_count);
             diffDetail.setDiffId(diffId);
+            diffDetail.setTotalCount(total_count);
+            diffDetail.setSameCount(same_count);
             try {
+                redisTemplateTool.setLogByDiffId_INFO(diffId, "apiId为" + apiId + "diffId为" + diffId + "的总比对字符数为：" + expect_count + "实际比对结果后相同字符数为：" + actual_count);
+                log.info("apiId为" + apiId + "diffId为" + diffId + "的总比对字符数为：" + expect_count + "实际比对结果后相同字符数为：" + actual_count);
                 diffDetailMapper.insertDiffDetail(diffDetail);
             } catch (Exception e) {
                 redisTemplateTool.setLogByDiffId_INFO(diffId, "apiId为" + apiId + "diffId为" + diffId + "的数据存储失败，请检查");
                 log.info("apiId为" + apiId + "diffId为" + diffId + "的数据存储失败，请检查");
             }
-            successRate = (actual_count * 100.0f) / expect_count;
+            successRate =  BigDecimal.valueOf((same_count * 100.0f) / total_count)
+                    .setScale(2, RoundingMode.HALF_UP)
+                    .floatValue();
         } else {
             successRate = 0;
             redisTemplateTool.setLogByDiffId_INFO(diffId, "apiId为" + apiId + "diffId为" + diffId + "的对应流量为0，请检查redis中是否有diff结果");

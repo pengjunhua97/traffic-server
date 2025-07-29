@@ -33,12 +33,15 @@ import com.tal.wangxiao.conan.sys.framework.web.service.TokenService;
 import com.tal.wangxiao.conan.utils.json.JsonChangesUtils;
 import com.tal.wangxiao.conan.utils.str.StringHandlerUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -229,7 +232,22 @@ public class DiffServiceImpl implements DiffService {
         apiDiffDetailInfo.setDiffApiLogInfoList(new ArrayList<DiffApiLogInfo>());
         apiDiffDetailInfo.setDomainName(apiInfo.getDomainName());
         apiDiffDetailInfo.setApiName(apiInfo.getName());
-
+        List<DiffDetail> byApiIdAndDiffId = diffDetailRepository.findByDiffId(diffId);
+        Integer totalDiffCount = 0;
+        Integer totalSameCount = 0;
+        if (!CollectionUtils.isEmpty(byApiIdAndDiffId)) {
+            for (DiffDetail diffDetail : byApiIdAndDiffId) {
+                totalDiffCount+=diffDetail.getTotalCount();
+                totalSameCount+=diffDetail.getSameCount();
+            }
+        }
+        if (totalDiffCount == 0 || totalSameCount == 0) {
+            apiDiffDetailInfo.setSimilarity(0);
+        }else {
+            apiDiffDetailInfo.setSimilarity(BigDecimal.valueOf((totalSameCount * 100.0) / totalDiffCount)
+                    .setScale(2, RoundingMode.HALF_UP)
+                    .floatValue());
+        }
         for (String requestId : apiRequestIdSet) {
             boolean flag = false;
             DiffApiLogInfo apiLogInfo = new DiffApiLogInfo();
