@@ -12,6 +12,7 @@ import com.tal.wangxiao.conan.sys.common.utils.poi.ExcelUtil;
 import com.tal.wangxiao.conan.sys.quartz.domain.SysJob;
 import com.tal.wangxiao.conan.sys.quartz.service.ISysJobService;
 import com.tal.wangxiao.conan.sys.quartz.util.CronUtils;
+import io.swagger.annotations.Api;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,6 +34,7 @@ import com.tal.wangxiao.conan.sys.common.exception.job.TaskException;
  */
 @RestController
 @RequestMapping("/monitor/job")
+@Api(value = "调度任务模块", tags = "调度任务模块")
 public class SysJobController extends BaseController
 {
     @Autowired

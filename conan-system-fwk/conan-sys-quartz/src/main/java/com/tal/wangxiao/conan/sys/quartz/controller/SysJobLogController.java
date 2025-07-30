@@ -10,6 +10,7 @@ import com.tal.wangxiao.conan.sys.common.enums.BusinessType;
 import com.tal.wangxiao.conan.sys.common.utils.poi.ExcelUtil;
 import com.tal.wangxiao.conan.sys.quartz.domain.SysJobLog;
 import com.tal.wangxiao.conan.sys.quartz.service.ISysJobLogService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/monitor/jobLog")
+@Api(value = "调度日志模块", tags = "调度日志模块")
 public class SysJobLogController extends BaseController
 {
     @Autowired

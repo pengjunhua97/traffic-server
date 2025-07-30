@@ -70,13 +70,13 @@ public class SwaggerConfig {
                 // 扫描所有有注解的api，用这种方式更灵活
                 //.apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 // 扫描指定包中的swagger注解
-                .apis(RequestHandlerSelectors.basePackage("com.tal.wangxiao.conan.admin.controller"))
+//                .apis(RequestHandlerSelectors.basePackage("com.tal.wangxiao.conan.admin.controller"))
                 //.apis(RequestHandlerSelectors.basePackage("com.tal.wangxiao.conan.common.controller"))
                 //多个扫描路径
 
                 //.apis(basePackage("com.tal.wangxiao.conan.admin.controller"+splitor+"com.tal.wangxiao.conan.sys.api.web.controller.system"))
 
-                // 扫描所有 .apis(RequestHandlerSelectors.any())
+                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build()
                 /* 设置安全模式，swagger可以设置访问token */
