@@ -461,7 +461,7 @@ public class DiffServiceImpl implements AgentDiffService {
         if (diff == null) {
             //把对应的比对ID的日志写入Redis, key='logBydiffId='+diffId
             redisTemplateTool.setLogByDiffId_INFO(diffId, "请查看在diff表中是否有相关数据" + diffId);
-            redisTemplateTool.setLogByDiffId_ERROR(diffId, "对比结束(end)");
+            redisTemplateTool.setLogByDiffId_INFO(diffId, "对比结束(end)");
             throw new BaseException("请查看在diff表中是否有相关数据" + diffId);
         }
         //获取diffId对应的所有api对比结果  所有actual/所有expect
@@ -485,7 +485,7 @@ public class DiffServiceImpl implements AgentDiffService {
         diff.setSuccessRate(success_rate);
         diffMapper.updateDiff(diff);
         redisTemplateTool.setLogByDiffId_INFO(diffId, "当前比对任务diffId=" + diffId + "的比对任务成功执行，成功率为" + success_rate + "%");
-        redisTemplateTool.setLogByDiffId_ERROR(diffId, "对比结束(end)");
+        redisTemplateTool.setLogByDiffId_INFO(diffId, "对比结束(end)");
         taskStatusUtil.updateTaskStatus(taskExecutionId, TaskStatus.DIFF_SUCCESS);
 
     }
