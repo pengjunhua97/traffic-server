@@ -371,8 +371,8 @@ public class DiffServiceImpl implements AgentDiffService {
             diffDetail.setTotalCount(total_count);
             diffDetail.setSameCount(same_count);
             try {
-                redisTemplateTool.setLogByDiffId_INFO(diffId, "apiId为" + apiId + "diffId为" + diffId + "的总比对字符数为：" + expect_count + "实际比对结果后相同字符数为：" + actual_count);
-                log.info("apiId为" + apiId + "diffId为" + diffId + "的总比对字符数为：" + expect_count + "实际比对结果后相同字符数为：" + actual_count);
+                redisTemplateTool.setLogByDiffId_INFO(diffId, "apiId为" + apiId + "diffId为" + diffId + "的总比对字符数为：" + total_count + "实际比对结果后相同字符数为：" + same_count);
+                log.info("apiId为" + apiId + "diffId为" + diffId + "的总比对字符数为：" + total_count + "实际比对结果后相同字符数为：" + same_count);
                 diffDetailMapper.insertDiffDetail(diffDetail);
             } catch (Exception e) {
                 redisTemplateTool.setLogByDiffId_INFO(diffId, "apiId为" + apiId + "diffId为" + diffId + "的数据存储失败，请检查");
