@@ -67,10 +67,15 @@ public class BaseController
     protected TableDataInfo getDataTable(List<?> list)
     {
         TableDataInfo rspData = new TableDataInfo();
+        PageInfo pageInfo = new PageInfo(list);
         rspData.setCode(HttpStatus.SUCCESS);
         rspData.setMsg("查询成功");
         rspData.setData(list);
-        rspData.setTotal(new PageInfo(list).getTotal());
+        rspData.setTotal(pageInfo.getTotal());
+        rspData.setPage(pageInfo.getPageNum());
+        rspData.setSize(pageInfo.getPageSize());
+        rspData.setPageSize(pageInfo.getPageSize());
+        rspData.setPages(pageInfo.getPages());
         return rspData;
     }
 
