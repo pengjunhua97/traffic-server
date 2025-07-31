@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
  * @author huyaoguo
  * @date 2019/9/23
  */
-@Service
+@Service("taskPipelineService")
 @Slf4j
 public class TaskPipelineServiceImpl implements TaskPipelineService {
 

@@ -118,7 +118,7 @@ public class JobInvokeUtil
         {
             String str = StringUtils.trimToEmpty(methodParams[i]);
             // String字符串类型，包含'
-            if (StringUtils.contains(str, "'"))
+            if (StringUtils.contains(str, "'") || StringUtils.contains(str, "\""))
             {
                 classs.add(new Object[] { StringUtils.replace(str, "'", ""), String.class });
             }
