@@ -128,12 +128,12 @@ public class JobInvokeUtil
                 classs.add(new Object[] { Boolean.valueOf(str), Boolean.class });
             }
             // long长整形，包含L
-            else if (StringUtils.containsIgnoreCase(str, "L"))
+            else if (StringUtils.contains(str, "L"))
             {
                 classs.add(new Object[] { Long.valueOf(StringUtils.replaceIgnoreCase(str, "L", "")), Long.class });
             }
             // double浮点类型，包含D
-            else if (StringUtils.containsIgnoreCase(str, "D"))
+            else if (StringUtils.contains(str, "D"))
             {
                 classs.add(new Object[] { Double.valueOf(StringUtils.replaceIgnoreCase(str, "D", "")), Double.class });
             }
