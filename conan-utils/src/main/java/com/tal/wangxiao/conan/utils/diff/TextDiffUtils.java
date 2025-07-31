@@ -95,10 +95,7 @@ public class TextDiffUtils {
         List<Map<String, String>> maps = Lists.newArrayList();  //存放的结果集
         diff_main.forEach(diff -> {
             Map<String, String> map = Maps.newHashMap();
-            if(diff_match_patch.Operation.EQUAL.equals(diff.operation)){  //无操作
-                map.put("key",diff_match_patch.Operation.EQUAL.name());
-                map.put("value",diff.text);
-            }else if(diff_match_patch.Operation.DELETE.equals(diff.operation)){   //删除
+            if(diff_match_patch.Operation.DELETE.equals(diff.operation)){   //删除
                 map.put("key",diff_match_patch.Operation.DELETE.name());
                 map.put("value",diff.text);
             }else if(diff_match_patch.Operation.INSERT.equals(diff.operation)){   //插入
@@ -107,7 +104,9 @@ public class TextDiffUtils {
             }
             maps.add(map);
         });
-        System.out.println("比较结果输出：" + maps);
+        System.out.println("基准baseString：" + baseString);
+        System.out.println("比对compareString：" + compareString);
+        System.out.println("比较结果输出：" + maps + " ,totalMsgCount: " + totalMsgCount + ", diffMsgCount: " + diffMsgCount);
         textDiffResult.setTotalMsgCount(totalMsgCount);
         textDiffResult.setDiffMsgCount(diffMsgCount);
         textDiffResult.setEqual(true);

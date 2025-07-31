@@ -369,18 +369,19 @@ public class DiffServiceImpl implements AgentDiffService {
             diffDetail.setExpectCount(expect_count);
             diffDetail.setDiffId(diffId);
             diffDetail.setTotalCount(total_count);
-            if (total_count > 0 && same_count == 0) {
-                diffDetail.setSameCount(total_count);
+            if (total_count ==  1 && same_count == 0) {
+                same_count = 1;
+                diffDetail.setSameCount(same_count);
             }else {
                 diffDetail.setSameCount(same_count);
             }
             try {
-                redisTemplateTool.setLogByDiffId_INFO(diffId, "apiId为" + apiId + "diffId为" + diffId + "的总比对字符数为：" + total_count + "实际比对结果后相同字符数为：" + same_count);
-                log.info("apiId为" + apiId + "diffId为" + diffId + "的总比对字符数为：" + total_count + "实际比对结果后相同字符数为：" + same_count);
+                redisTemplateTool.setLogByDiffId_INFO(diffId, "apiId为: " + apiId + ", diffId为: " + diffId + "的总比对字符数为：" + total_count + "实际比对结果后相同字符数为：" + same_count);
+                log.info("apiId为" + apiId + "，diffId为" + diffId + "的总比对字符数为：" + total_count + "实际比对结果后相同字符数为：" + same_count);
                 diffDetailMapper.insertDiffDetail(diffDetail);
             } catch (Exception e) {
-                redisTemplateTool.setLogByDiffId_INFO(diffId, "apiId为" + apiId + "diffId为" + diffId + "的数据存储失败，请检查");
-                log.info("apiId为" + apiId + "diffId为" + diffId + "的数据存储失败，请检查");
+                redisTemplateTool.setLogByDiffId_INFO(diffId, "apiId为" + apiId + ", diffId为" + diffId + "的数据存储失败，请检查");
+                log.info("apiId为" + apiId + "，diffId为" + diffId + "的数据存储失败，请检查");
             }
             successRate =  BigDecimal.valueOf((same_count * 100.0f) / total_count)
                     .setScale(2, RoundingMode.HALF_UP)
