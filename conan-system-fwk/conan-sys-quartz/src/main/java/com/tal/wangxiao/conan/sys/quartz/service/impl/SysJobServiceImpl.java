@@ -2,6 +2,7 @@ package com.tal.wangxiao.conan.sys.quartz.service.impl;
 
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 import com.tal.wangxiao.conan.sys.quartz.domain.SysJob;
 import com.tal.wangxiao.conan.sys.quartz.mapper.SysJobMapper;
@@ -29,7 +30,7 @@ public class SysJobServiceImpl implements ISysJobService
     @Autowired
     private Scheduler scheduler;
 
-    @Autowired
+    @Resource
     private SysJobMapper jobMapper;
 
     /**
@@ -156,7 +157,7 @@ public class SysJobServiceImpl implements ISysJobService
     public int changeStatus(SysJob job) throws SchedulerException
     {
         int rows = 0;
-        String status = job.getStatus();
+        Integer status = job.getStatus();
         if (ScheduleConstants.Status.NORMAL.getValue().equals(status))
         {
             rows = resumeJob(job);

@@ -45,15 +45,15 @@ public class SysJob extends BaseEntity implements Serializable
 
     /** cron计划策略 */
     @Excel(name = "计划策略 ", readConverterExp = "0=默认,1=立即触发执行,2=触发一次执行,3=不触发立即执行")
-    private String misfirePolicy = ScheduleConstants.MISFIRE_DEFAULT;
+    private Integer misfirePolicy = ScheduleConstants.MISFIRE_DEFAULT;
 
     /** 是否并发执行（0允许 1禁止） */
     @Excel(name = "并发执行", readConverterExp = "0=允许,1=禁止")
-    private String concurrent;
+    private Integer concurrent;
 
     /** 任务状态（0正常 1暂停） */
     @Excel(name = "任务状态", readConverterExp = "0=正常,1=暂停")
-    private String status;
+    private Integer status;
 
     public Long getJobId()
     {
@@ -121,32 +121,32 @@ public class SysJob extends BaseEntity implements Serializable
         return null;
     }
 
-    public String getMisfirePolicy()
+    public Integer getMisfirePolicy()
     {
         return misfirePolicy;
     }
 
-    public void setMisfirePolicy(String misfirePolicy)
+    public void setMisfirePolicy(Integer misfirePolicy)
     {
         this.misfirePolicy = misfirePolicy;
     }
 
-    public String getConcurrent()
+    public Integer getConcurrent()
     {
         return concurrent;
     }
 
-    public void setConcurrent(String concurrent)
+    public void setConcurrent(Integer concurrent)
     {
         this.concurrent = concurrent;
     }
 
-    public String getStatus()
+    public Integer getStatus()
     {
         return status;
     }
 
-    public void setStatus(String status)
+    public void setStatus(Integer status)
     {
         this.status = status;
     }
