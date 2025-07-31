@@ -40,6 +40,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="invokeTarget != null and invokeTarget != ''">
 				AND invoke_target like concat('%', #{invokeTarget}, '%')
 			</if>
+			<if test="concurrent!= null">
+				AND concurrent = #{concurrent}
+			</if>
+			<if test="misfirePolicy!= null">
+				AND misfire_policy = #{misfirePolicy}
+			</if>
 		</where>
 	</select>
 	
