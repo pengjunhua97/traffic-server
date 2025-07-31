@@ -342,7 +342,7 @@ public class DiffServiceImpl implements AgentDiffService {
         Set<String> keys = stringRedisTemplate.keys(prefix);
         //diff_detail 中的actual_count diff结果相同接口个数
         int actual_count = 0;
-        int total_count = 0;
+        int total_count = 1;
         //diff_detail 中的expect_count 接口总数
         float successRate = 0;
         int expect_count = 0;
@@ -369,7 +369,11 @@ public class DiffServiceImpl implements AgentDiffService {
             diffDetail.setExpectCount(expect_count);
             diffDetail.setDiffId(diffId);
             diffDetail.setTotalCount(total_count);
-            diffDetail.setSameCount(same_count);
+            if (total_count > 0 && same_count == 0) {
+                diffDetail.setSameCount(total_count);
+            }else {
+                diffDetail.setSameCount(same_count);
+            }
             try {
                 redisTemplateTool.setLogByDiffId_INFO(diffId, "apiId为" + apiId + "diffId为" + diffId + "的总比对字符数为：" + total_count + "实际比对结果后相同字符数为：" + same_count);
                 log.info("apiId为" + apiId + "diffId为" + diffId + "的总比对字符数为：" + total_count + "实际比对结果后相同字符数为：" + same_count);
