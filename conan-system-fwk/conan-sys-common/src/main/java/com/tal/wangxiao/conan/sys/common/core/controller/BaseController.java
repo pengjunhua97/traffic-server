@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.tal.wangxiao.conan.sys.common.constant.HttpStatus;
 import com.tal.wangxiao.conan.sys.common.core.domain.AjaxResult;
+import com.tal.wangxiao.conan.sys.common.core.page.BasePageInfoResponse;
 import com.tal.wangxiao.conan.sys.common.core.page.PageDomain;
 import com.tal.wangxiao.conan.sys.common.core.page.TableDataInfo;
 import com.tal.wangxiao.conan.sys.common.core.page.TableSupport;
@@ -68,14 +69,11 @@ public class BaseController
     {
         TableDataInfo rspData = new TableDataInfo();
         PageInfo pageInfo = new PageInfo(list);
+        BasePageInfoResponse pageInfoResponse = BasePageInfoResponse.getPageResultByList(pageInfo);
+        pageInfoResponse.setData(list);
         rspData.setCode(HttpStatus.SUCCESS);
         rspData.setMsg("查询成功");
-        rspData.setData(list);
-        rspData.setTotal(pageInfo.getTotal());
-        rspData.setPage(pageInfo.getPageNum());
-        rspData.setSize(pageInfo.getPageSize());
-        rspData.setPageSize(pageInfo.getPageSize());
-        rspData.setPages(pageInfo.getPages());
+        rspData.setData(pageInfoResponse);
         return rspData;
     }
 
