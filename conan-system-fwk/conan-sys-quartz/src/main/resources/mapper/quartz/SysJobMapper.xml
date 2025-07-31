@@ -34,7 +34,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="jobGroup != null and jobGroup != ''">
 				AND job_group = #{jobGroup}
 			</if>
-			<if test="status != null and status != ''">
+			<if test="status != null">
 				AND status = #{status}
 			</if>
 			<if test="invokeTarget != null and invokeTarget != ''">
